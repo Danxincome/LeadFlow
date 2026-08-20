@@ -88,7 +88,7 @@ export default function ChatDemoPage() {
 <script>
   window.LEADFLOW_BUSINESS_ID = "YOUR_BUSINESS_ID";
 </script>
-<script src="${typeof window !== 'undefined' ? window.location.origin : 'https://your-domain.com'}/widget.js"></script>`}
+<script src="${process.env.NEXT_PUBLIC_APP_URL || 'https://your-domain.com'}/widget.js"></script>`}
           </pre>
         </div>
       </div>
