@@ -58,7 +58,7 @@ async function callAI(systemPrompt: string, messages: Array<{ role: string; cont
   const model = process.env.GEMINI_MODEL || 'gemini-2.0-flash';
 
   if (!apiKey) {
-    return generateFallbackResponse(messages);
+    throw new Error('[DEBUG] GEMINI_API_KEY is not set or is empty. Add it to .env.local and restart the dev server.');
   }
 
   const geminiContents = messages.map((m) => ({
@@ -79,8 +79,9 @@ async function callAI(systemPrompt: string, messages: Array<{ role: string; cont
   );
 
   if (!response.ok) {
-    console.error('Gemini API error:', response.status, await response.text());
-    return generateFallbackResponse(messages);
+    const errorBody = await response.text();
+    console.error('Gemini API error:', response.status, errorBody);
+    throw new Error(`[DEBUG] Gemini API returned ${response.status}: ${errorBody}`);
   }
 
   const data = await response.json();
@@ -250,6 +251,7 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error('Chat API error:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    const debugMessage = error instanceof Error ? error.message : 'Internal server error';
+    return NextResponse.json({ error: debugMessage }, { status: 500 });
   }
 }
