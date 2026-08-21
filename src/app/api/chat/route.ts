@@ -54,35 +54,37 @@ Only include fields that the customer has actually provided. Update this block w
 }
 
 async function callAI(systemPrompt: string, messages: Array<{ role: string; content: string }>): Promise<string> {
-  const apiKey = process.env.AI_API_KEY;
-  const model = process.env.AI_MODEL || 'claude-sonnet-5';
+  const apiKey = process.env.GEMINI_API_KEY;
+  const model = process.env.GEMINI_MODEL || 'gemini-2.0-flash';
 
   if (!apiKey) {
     return generateFallbackResponse(messages);
   }
 
-  const response = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': apiKey,
-      'anthropic-version': '2023-06-01',
+  const geminiContents = messages.map((m) => ({
+    role: m.role === 'assistant' ? 'model' : 'user',
+    parts: [{ text: m.content }],
+  }));
+
+  const response = await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        systemInstruction: { parts: [{ text: systemPrompt }] },
+        contents: geminiContents,
+      }),
     },
-    body: JSON.stringify({
-      model,
-      max_tokens: 1024,
-      system: systemPrompt,
-      messages: messages.map((m) => ({ role: m.role, content: m.content })),
-    }),
-  });
+  );
 
   if (!response.ok) {
-    console.error('AI API error:', response.status, await response.text());
+    console.error('Gemini API error:', response.status, await response.text());
     return generateFallbackResponse(messages);
   }
 
   const data = await response.json();
-  return data.content[0]?.text || 'I apologize, I had trouble processing that. Could you try again?';
+  return data.candidates?.[0]?.content?.parts?.[0]?.text || 'I apologize, I had trouble processing that. Could you try again?';
 }
 
 function generateFallbackResponse(messages: Array<{ role: string; content: string }>): string {
