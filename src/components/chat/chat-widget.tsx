@@ -68,6 +68,10 @@ export function ChatWidget({ businessId, greeting, inline = false }: ChatWidgetP
 
       const data = await res.json();
 
+      if (!res.ok) {
+        throw new Error(data.error || 'Something went wrong');
+      }
+
       if (data.conversationId && !conversationId) {
         setConversationId(data.conversationId);
       }
@@ -80,13 +84,14 @@ export function ChatWidget({ businessId, greeting, inline = false }: ChatWidgetP
           content: data.message || "I'm sorry, I couldn't process that. Please try again.",
         },
       ]);
-    } catch {
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Something went wrong';
       setMessages((prev) => [
         ...prev,
         {
           id: (Date.now() + 1).toString(),
           role: 'assistant',
-          content: "I'm having trouble connecting right now. Please try again in a moment.",
+          content: `Sorry, something went wrong: ${errorMessage}`,
         },
       ]);
     } finally {

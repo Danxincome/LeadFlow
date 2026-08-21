@@ -1,10 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+import { createAdminClient } from '@/lib/supabase/admin';
 
 function buildSystemPrompt(business: Record<string, unknown>, aiSettings: Record<string, unknown>): string {
   const services = (business.services as Array<{ name: string; description: string; price: string }>) || [];
@@ -140,6 +135,8 @@ export async function POST(request: NextRequest) {
     if (!businessId || !message) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
+
+    const supabase = createAdminClient();
 
     const { data: business } = await supabase
       .from('businesses')
