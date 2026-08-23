@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import Link from 'next/link';
 import { MessageSquare, X, Send, Bot, User, Zap } from 'lucide-react';
 import { Spinner } from '@/components/ui/loading';
 
@@ -122,6 +123,16 @@ export function ChatWidget({ businessId, greeting, inline = false }: ChatWidgetP
             <X className="w-5 h-5" />
           </button>
         )}
+      </div>
+
+      <div className="px-4 py-2 bg-surface-tertiary border-b border-border-light shrink-0">
+        <p className="text-[11px] text-text-tertiary leading-snug">
+          This chat is powered by AI. Messages you provide may be processed by LeadFlow and its AI service providers to
+          provide responses and support your request.{' '}
+          <Link href="/privacy" className="underline hover:text-text-secondary">
+            Privacy Policy
+          </Link>
+        </p>
       </div>
 
       <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-surface-secondary">

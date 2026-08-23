@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { Zap, ArrowLeft } from 'lucide-react';
 import { ChatWidget } from '@/components/chat/chat-widget';
+import { SiteFooter } from '@/components/layout/site-footer';
 
 export default function ChatDemoPage() {
   const [businessId, setBusinessId] = useState('');
@@ -91,6 +92,8 @@ export default function ChatDemoPage() {
 <script src="/widget.js"></script>`}          </pre>
         </div>
       </div>
+
+      <SiteFooter />
     </div>
   );
 }

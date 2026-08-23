@@ -74,6 +74,20 @@
       cursor: pointer;
     }
 
+    #leadflow-widget-disclosure {
+      padding: 8px 14px;
+      font-size: 11px;
+      line-height: 1.4;
+      color: #94a3b8;
+      background: #f1f5f9;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    #leadflow-widget-disclosure a {
+      color: #94a3b8;
+      text-decoration: underline;
+    }
+
     #leadflow-widget-messages {
       flex: 1;
       overflow-y: auto;
@@ -151,6 +165,12 @@
       <button id="leadflow-widget-close" aria-label="Close chat">×</button>
     </div>
 
+    <div id="leadflow-widget-disclosure">
+      This chat is powered by AI. Messages you provide may be processed by LeadFlow and its AI service providers to
+      provide responses and support your request.
+      <a id="leadflow-widget-privacy-link" href="#" target="_blank" rel="noopener">Privacy Policy</a>
+    </div>
+
     <div id="leadflow-widget-messages"></div>
 
     <form id="leadflow-widget-form">
@@ -166,6 +186,11 @@
 
   document.body.appendChild(button);
   document.body.appendChild(chat);
+
+  var privacyLink = document.getElementById('leadflow-widget-privacy-link');
+  if (privacyLink) {
+    privacyLink.href = apiBase + '/privacy';
+  }
 
   var messagesContainer = document.getElementById('leadflow-widget-messages');
   var input = document.getElementById('leadflow-widget-input');
