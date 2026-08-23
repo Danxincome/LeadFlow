@@ -1,0 +1,82 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-primary-50: #eff6ff;
+  --color-primary-100: #dbeafe;
+  --color-primary-200: #bfdbfe;
+  --color-primary-300: #93c5fd;
+  --color-primary-400: #60a5fa;
+  --color-primary-500: #3b82f6;
+  --color-primary-600: #2563eb;
+  --color-primary-700: #1d4ed8;
+  --color-primary-800: #1e40af;
+  --color-primary-900: #1e3a8a;
+
+  --color-accent-50: #f0fdf4;
+  --color-accent-500: #22c55e;
+  --color-accent-600: #16a34a;
+
+  --color-surface: #ffffff;
+  --color-surface-secondary: #f8fafc;
+  --color-surface-tertiary: #f1f5f9;
+  --color-border: #e2e8f0;
+  --color-border-light: #f1f5f9;
+  --color-text-primary: #0f172a;
+  --color-text-secondary: #475569;
+  --color-text-tertiary: #94a3b8;
+
+  --color-status-new: #3b82f6;
+  --color-status-contacted: #f59e0b;
+  --color-status-qualified: #8b5cf6;
+  --color-status-booked: #22c55e;
+  --color-status-lost: #ef4444;
+
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+}
+
+@layer base {
+  body {
+    background-color: var(--color-surface-secondary);
+    color: var(--color-text-primary);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-primary-600 text-white px-5 py-2.5 rounded-lg font-medium
+      hover:bg-primary-700 active:bg-primary-800 transition-colors
+      disabled:opacity-50 disabled:cursor-not-allowed
+      focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2;
+  }
+
+  .btn-secondary {
+    @apply bg-white text-text-primary border border-border px-5 py-2.5 rounded-lg font-medium
+      hover:bg-surface-tertiary active:bg-surface-tertiary transition-colors
+      disabled:opacity-50 disabled:cursor-not-allowed
+      focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2;
+  }
+
+  .btn-danger {
+    @apply bg-red-600 text-white px-5 py-2.5 rounded-lg font-medium
+      hover:bg-red-700 active:bg-red-800 transition-colors
+      disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .input-field {
+    @apply w-full px-3.5 py-2.5 bg-white border border-border rounded-lg text-text-primary
+      placeholder:text-text-tertiary
+      focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500
+      transition-colors;
+  }
+
+  .card {
+    @apply bg-white rounded-xl border border-border shadow-sm;
+  }
+
+  .status-badge {
+    @apply inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold;
+  }
+}
