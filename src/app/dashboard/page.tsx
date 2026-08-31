@@ -12,22 +12,19 @@ interface StatsCardProps {
   title: string;
   value: string | number;
   icon: React.ElementType;
-  color: string;
-  bgColor: string;
+  accentBorder: string;
+  iconColor: string;
+  primary?: boolean;
 }
 
-function StatsCard({ title, value, icon: Icon, color, bgColor }: StatsCardProps) {
+function StatsCard({ title, value, icon: Icon, accentBorder, iconColor, primary }: StatsCardProps) {
   return (
-    <div className="card p-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="text-sm font-medium text-text-secondary">{title}</p>
-          <p className="text-3xl font-bold text-text-primary mt-1">{value}</p>
-        </div>
-        <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${bgColor}`}>
-          <Icon className={`w-6 h-6 ${color}`} />
-        </div>
+    <div className={`card p-6 border-t-2 ${accentBorder}`}>
+      <div className="flex items-center gap-2">
+        <Icon className={`w-4 h-4 ${iconColor}`} />
+        <p className="text-sm font-medium text-text-secondary">{title}</p>
       </div>
+      <p className={`font-bold text-text-primary mt-2 ${primary ? 'text-4xl' : 'text-2xl'}`}>{value}</p>
     </div>
   );
 }
@@ -124,10 +121,10 @@ export default function DashboardPage() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <StatsCard title="Total Leads" value={totalLeads} icon={Users} color="text-primary-600" bgColor="bg-primary-50" />
-        <StatsCard title="New Leads" value={newLeads} icon={UserPlus} color="text-blue-600" bgColor="bg-blue-50" />
-        <StatsCard title="Conversion Rate" value={`${conversionRate}%`} icon={TrendingUp} color="text-green-600" bgColor="bg-green-50" />
-        <StatsCard title="Booked" value={bookedLeads} icon={DollarSign} color="text-violet-600" bgColor="bg-violet-50" />
+        <StatsCard title="Total Leads" value={totalLeads} icon={Users} accentBorder="border-primary-600" iconColor="text-primary-600" primary />
+        <StatsCard title="New Leads" value={newLeads} icon={UserPlus} accentBorder="border-status-new" iconColor="text-status-new" />
+        <StatsCard title="Conversion Rate" value={`${conversionRate}%`} icon={TrendingUp} accentBorder="border-accent-500" iconColor="text-accent-500" />
+        <StatsCard title="Booked" value={bookedLeads} icon={DollarSign} accentBorder="border-status-booked" iconColor="text-status-booked" />
       </div>
 
       <div className="grid lg:grid-cols-3 gap-6">

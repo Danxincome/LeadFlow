@@ -8,6 +8,26 @@ import { EmptyState } from '@/components/ui/empty-state';
 import { PageLoading, Spinner } from '@/components/ui/loading';
 import type { Conversation, Message } from '@/lib/types';
 
+function getInitials(name: string): string {
+  const trimmed = name.trim();
+  if (!trimmed) return '?';
+  const parts = trimmed.split(/\s+/).filter(Boolean);
+  const initials = parts.length > 1 ? `${parts[0][0]}${parts[parts.length - 1][0]}` : trimmed.slice(0, 2);
+  return initials.toUpperCase();
+}
+
+function formatRelative(dateStr: string): string {
+  const date = new Date(dateStr);
+  const diffMin = Math.round((Date.now() - date.getTime()) / 60000);
+  if (diffMin < 1) return 'Just now';
+  if (diffMin < 60) return `${diffMin}m ago`;
+  const diffHr = Math.round(diffMin / 60);
+  if (diffHr < 24) return `${diffHr}h ago`;
+  const diffDay = Math.round(diffHr / 24);
+  if (diffDay < 7) return `${diffDay}d ago`;
+  return date.toLocaleDateString();
+}
+
 export default function ConversationsPage() {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -71,13 +91,23 @@ export default function ConversationsPage() {
         </button>
 
         <div className="card">
-          <div className="px-6 py-4 border-b border-border">
-            <h2 className="font-semibold text-text-primary">
-              {selected.visitor_name || 'Visitor'}
-            </h2>
-            <p className="text-xs text-text-secondary">
-              Started {new Date(selected.started_at).toLocaleString()}
-            </p>
+          <div className="px-6 py-4 border-b border-border flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-primary-50 flex items-center justify-center shrink-0 text-sm font-semibold text-primary-700">
+              {getInitials(selected.lead?.name || selected.visitor_name || 'Visitor')}
+            </div>
+            <div className="min-w-0">
+              <h2 className="font-semibold text-text-primary truncate">
+                {selected.lead?.name || selected.visitor_name || 'Visitor'}
+              </h2>
+              <p className="text-xs text-text-secondary truncate">
+                {selected.lead?.email ? selected.lead.email : `Started ${new Date(selected.started_at).toLocaleString()}`}
+              </p>
+              {selected.lead?.email && (
+                <p className="text-[11px] text-text-tertiary truncate">
+                  Started {new Date(selected.started_at).toLocaleString()}
+                </p>
+              )}
+            </div>
           </div>
 
           <div className="p-6 space-y-4 max-h-[60vh] overflow-y-auto">
@@ -137,28 +167,32 @@ export default function ConversationsPage() {
         />
       ) : (
         <div className="card divide-y divide-border">
-          {conversations.map((conv) => (
-            <button
-              key={conv.id}
-              onClick={() => selectConversation(conv)}
-              className="w-full px-6 py-4 flex items-center justify-between hover:bg-surface-secondary transition-colors text-left"
-            >
-              <div className="flex items-center gap-3 min-w-0">
-                <div className="w-10 h-10 rounded-full bg-surface-tertiary flex items-center justify-center shrink-0">
-                  <User className="w-5 h-5 text-text-tertiary" />
+          {conversations.map((conv) => {
+            const displayName = conv.lead?.name || conv.visitor_name || 'Visitor';
+            return (
+              <button
+                key={conv.id}
+                onClick={() => selectConversation(conv)}
+                className="w-full px-6 py-4 flex items-center justify-between hover:bg-surface-secondary transition-colors text-left"
+              >
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="w-10 h-10 rounded-full bg-primary-50 flex items-center justify-center shrink-0 text-sm font-semibold text-primary-700">
+                    {getInitials(displayName)}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="font-medium text-text-primary truncate">{displayName}</p>
+                    <p className="text-xs text-text-secondary truncate">
+                      {conv.lead?.email || 'No linked lead'}
+                    </p>
+                  </div>
                 </div>
-                <div className="min-w-0">
-                  <p className="font-medium text-text-primary truncate">
-                    {conv.visitor_name || 'Visitor'}
-                  </p>
-                  <p className="text-xs text-text-secondary">
-                    {new Date(conv.updated_at).toLocaleString()}
-                  </p>
+                <div className="flex items-center gap-2 shrink-0 ml-4">
+                  <span className="text-xs text-text-tertiary">{formatRelative(conv.updated_at)}</span>
+                  <MessageSquare className="w-4 h-4 text-text-tertiary" />
                 </div>
-              </div>
-              <MessageSquare className="w-4 h-4 text-text-tertiary shrink-0 ml-4" />
-            </button>
-          ))}
+              </button>
+            );
+          })}
         </div>
       )}
     </div>

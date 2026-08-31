@@ -3,11 +3,11 @@
 import type { LeadStatus } from '@/lib/types';
 
 const statusConfig: Record<LeadStatus, { label: string; className: string }> = {
-  new: { label: 'New', className: 'bg-blue-50 text-blue-700 ring-1 ring-blue-600/20' },
-  contacted: { label: 'Contacted', className: 'bg-amber-50 text-amber-700 ring-1 ring-amber-600/20' },
-  qualified: { label: 'Qualified', className: 'bg-violet-50 text-violet-700 ring-1 ring-violet-600/20' },
-  booked: { label: 'Booked', className: 'bg-green-50 text-green-700 ring-1 ring-green-600/20' },
-  lost: { label: 'Lost', className: 'bg-red-50 text-red-700 ring-1 ring-red-600/20' },
+  new: { label: 'New', className: 'bg-status-new/10 text-status-new ring-1 ring-status-new/25' },
+  contacted: { label: 'Contacted', className: 'bg-status-contacted/10 text-status-contacted ring-1 ring-status-contacted/25' },
+  qualified: { label: 'Qualified', className: 'bg-status-qualified/10 text-status-qualified ring-1 ring-status-qualified/25' },
+  booked: { label: 'Booked', className: 'bg-status-booked/10 text-status-booked ring-1 ring-status-booked/25' },
+  lost: { label: 'Lost', className: 'bg-status-lost/10 text-status-lost ring-1 ring-status-lost/25' },
 };
 
 export function StatusBadge({ status }: { status: LeadStatus }) {
