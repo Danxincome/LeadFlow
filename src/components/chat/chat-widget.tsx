@@ -108,18 +108,23 @@ export function ChatWidget({ businessId, greeting, inline = false }: ChatWidgetP
 
   const chatContent = (
     <div className={`flex flex-col ${inline ? 'h-[600px]' : 'h-[500px]'}`}>
-      <div className="bg-primary-600 text-white px-4 py-3 flex items-center justify-between rounded-t-2xl shrink-0">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
+      <div className="bg-gradient-to-r from-primary-600 to-primary-700 text-white px-4 py-3.5 flex items-center justify-between rounded-t-2xl shrink-0">
+        <div className="flex items-center gap-2.5">
+          <div className="w-9 h-9 rounded-full bg-white/15 ring-1 ring-white/25 flex items-center justify-center">
             <Bot className="w-4 h-4" />
           </div>
           <div>
             <p className="text-sm font-semibold">AI Assistant</p>
-            <p className="text-xs text-primary-200">Online</p>
+            <p className="text-xs text-primary-200 flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-accent-500" /> Online
+            </p>
           </div>
         </div>
         {!inline && (
-          <button onClick={() => setOpen(false)} className="p-1 hover:bg-white/10 rounded transition-colors">
+          <button
+            onClick={() => setOpen(false)}
+            className="focus-ring p-1.5 rounded-md hover:bg-white/10 transition-colors"
+          >
             <X className="w-5 h-5" />
           </button>
         )}
@@ -135,7 +140,7 @@ export function ChatWidget({ businessId, greeting, inline = false }: ChatWidgetP
         </p>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-surface-secondary">
+      <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-surface-secondary">
         {messages.map((msg) => (
           <div
             key={msg.id}
@@ -147,9 +152,9 @@ export function ChatWidget({ businessId, greeting, inline = false }: ChatWidgetP
               </div>
             )}
             <div
-              className={`rounded-2xl px-3.5 py-2.5 max-w-[80%] ${
+              className={`rounded-2xl px-4 py-2.5 max-w-[80%] ${
                 msg.role === 'user'
-                  ? 'bg-primary-600 text-white rounded-tr-sm'
+                  ? 'bg-primary-600 text-white rounded-tr-sm shadow-sm'
                   : 'bg-white text-text-primary shadow-sm border border-border-light rounded-tl-sm'
               }`}
             >
@@ -187,13 +192,13 @@ export function ChatWidget({ businessId, greeting, inline = false }: ChatWidgetP
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Type a message..."
-            className="flex-1 px-3.5 py-2.5 bg-surface-secondary rounded-xl text-sm text-text-primary placeholder:text-text-tertiary focus:outline-none focus:ring-2 focus:ring-primary-500"
+            className="flex-1 px-3.5 py-2.5 bg-surface-secondary rounded-xl text-sm text-text-primary placeholder:text-text-tertiary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 transition-shadow"
             disabled={loading}
           />
           <button
             type="submit"
             disabled={loading || !input.trim()}
-            className="w-10 h-10 bg-primary-600 text-white rounded-xl flex items-center justify-center hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
+            className="focus-ring w-10 h-10 bg-primary-600 text-white rounded-xl flex items-center justify-center hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
           >
             {loading ? <Spinner size="sm" /> : <Send className="w-4 h-4" />}
           </button>
@@ -207,7 +212,7 @@ export function ChatWidget({ businessId, greeting, inline = false }: ChatWidgetP
 
   if (inline) {
     return (
-      <div className="card overflow-hidden rounded-2xl shadow-lg max-w-md mx-auto">
+      <div className="card overflow-hidden rounded-2xl shadow-sm max-w-md mx-auto">
         {chatContent}
       </div>
     );
@@ -217,14 +222,14 @@ export function ChatWidget({ businessId, greeting, inline = false }: ChatWidgetP
     <>
       {open && (
         <div className="fixed bottom-20 right-4 z-50 w-[380px] max-w-[calc(100vw-2rem)]">
-          <div className="card overflow-hidden rounded-2xl shadow-2xl">
+          <div className="card overflow-hidden rounded-2xl shadow-2xl border-border-light">
             {chatContent}
           </div>
         </div>
       )}
       <button
         onClick={toggleOpen}
-        className="fixed bottom-4 right-4 z-50 w-14 h-14 bg-primary-600 text-white rounded-full shadow-lg hover:bg-primary-700 transition-all hover:scale-105 flex items-center justify-center"
+        className="focus-ring fixed bottom-4 right-4 z-50 w-14 h-14 bg-primary-600 text-white rounded-full shadow-xl hover:bg-primary-700 transition-all hover:scale-105 flex items-center justify-center"
       >
         {open ? <X className="w-6 h-6" /> : <MessageSquare className="w-6 h-6" />}
       </button>

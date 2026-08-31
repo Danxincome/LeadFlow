@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Plus, Trash2, Save, Check } from 'lucide-react';
+import { Plus, Trash2, Save, Check, Building2, Wrench, Clock, CalendarClock, HelpCircle } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { Spinner, PageLoading } from '@/components/ui/loading';
 import type { Service, FAQ, BusinessHours } from '@/lib/types';
@@ -113,8 +113,14 @@ export default function OnboardingPage() {
       </div>
 
       <form onSubmit={handleSave} className="space-y-6">
-        <div className="card p-6">
-          <h2 className="text-lg font-semibold text-text-primary mb-4">Basic Information</h2>
+        <div className="card divide-y divide-border overflow-hidden">
+        <div className="p-6">
+          <div className="flex items-center gap-2.5 mb-4">
+            <div className="w-8 h-8 rounded-lg bg-primary-50 flex items-center justify-center shrink-0">
+              <Building2 className="w-4 h-4 text-primary-600" />
+            </div>
+            <h2 className="text-base font-semibold text-text-primary">Basic Information</h2>
+          </div>
           <div className="grid sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-text-primary mb-1.5">Business Name *</label>
@@ -175,9 +181,14 @@ export default function OnboardingPage() {
           </div>
         </div>
 
-        <div className="card p-6">
+        <div className="p-6">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-text-primary">Services & Pricing</h2>
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-lg bg-primary-50 flex items-center justify-center shrink-0">
+                <Wrench className="w-4 h-4 text-primary-600" />
+              </div>
+              <h2 className="text-base font-semibold text-text-primary">Services & Pricing</h2>
+            </div>
             <button
               type="button"
               onClick={() => setServices([...services, { name: '', description: '', price: '' }])}
@@ -235,8 +246,13 @@ export default function OnboardingPage() {
           </div>
         </div>
 
-        <div className="card p-6">
-          <h2 className="text-lg font-semibold text-text-primary mb-4">Business Hours</h2>
+        <div className="p-6">
+          <div className="flex items-center gap-2.5 mb-4">
+            <div className="w-8 h-8 rounded-lg bg-primary-50 flex items-center justify-center shrink-0">
+              <Clock className="w-4 h-4 text-primary-600" />
+            </div>
+            <h2 className="text-base font-semibold text-text-primary">Business Hours</h2>
+          </div>
           <div className="space-y-3">
             {DAYS.map((day) => (
               <div key={day} className="flex items-center gap-4">
@@ -280,8 +296,13 @@ export default function OnboardingPage() {
           </div>
         </div>
 
-        <div className="card p-6">
-          <h2 className="text-lg font-semibold text-text-primary mb-2">Booking Instructions</h2>
+        <div className="p-6">
+          <div className="flex items-center gap-2.5 mb-2">
+            <div className="w-8 h-8 rounded-lg bg-primary-50 flex items-center justify-center shrink-0">
+              <CalendarClock className="w-4 h-4 text-primary-600" />
+            </div>
+            <h2 className="text-base font-semibold text-text-primary">Booking Instructions</h2>
+          </div>
           <p className="text-sm text-text-secondary mb-4">How should customers book? The AI will share these instructions.</p>
           <textarea
             className="input-field"
@@ -292,9 +313,14 @@ export default function OnboardingPage() {
           />
         </div>
 
-        <div className="card p-6">
+        <div className="p-6">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-text-primary">FAQs</h2>
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-lg bg-primary-50 flex items-center justify-center shrink-0">
+                <HelpCircle className="w-4 h-4 text-primary-600" />
+              </div>
+              <h2 className="text-base font-semibold text-text-primary">FAQs</h2>
+            </div>
             <button
               type="button"
               onClick={() => setFaqs([...faqs, { question: '', answer: '' }])}
@@ -341,6 +367,7 @@ export default function OnboardingPage() {
               </div>
             ))}
           </div>
+        </div>
         </div>
 
         <div className="flex items-center gap-4">

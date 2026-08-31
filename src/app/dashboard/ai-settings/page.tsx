@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Save, Check, Bot } from 'lucide-react';
+import { Save, Check, Bot, MessageSquare, Sparkles, FileText } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { Spinner, PageLoading } from '@/components/ui/loading';
 import { ChatWidget } from '@/components/chat/chat-widget';
@@ -110,51 +110,76 @@ export default function AISettingsPage() {
       </div>
 
       <form onSubmit={handleSave} className="space-y-6">
-        <div className="card p-6">
-          <h2 className="text-lg font-semibold text-text-primary mb-2">Greeting Message</h2>
-          <p className="text-sm text-text-secondary mb-4">The first message customers see when they open the chat.</p>
-          <textarea
-            className="input-field"
-            rows={3}
-            value={settings.greeting || ''}
-            onChange={(e) => setSettings({ ...settings, greeting: e.target.value })}
-            placeholder="Hi there! Welcome to our shop..."
-          />
-        </div>
-
-        <div className="card p-6">
-          <h2 className="text-lg font-semibold text-text-primary mb-4">Tone</h2>
-          <div className="grid sm:grid-cols-3 gap-3">
-            {tones.map((tone) => (
-              <button
-                key={tone.value}
-                type="button"
-                onClick={() => setSettings({ ...settings, tone: tone.value })}
-                className={`p-4 rounded-xl border-2 text-left transition-all ${
-                  settings.tone === tone.value
-                    ? 'border-primary-600 bg-primary-50'
-                    : 'border-border hover:border-primary-200'
-                }`}
-              >
-                <p className="font-medium text-text-primary text-sm">{tone.label}</p>
-                <p className="text-xs text-text-secondary mt-1">{tone.description}</p>
-              </button>
-            ))}
+        <div className="card divide-y divide-border overflow-hidden">
+          <div className="p-6">
+            <div className="flex items-center gap-2.5 mb-2">
+              <div className="w-8 h-8 rounded-lg bg-primary-50 flex items-center justify-center shrink-0">
+                <MessageSquare className="w-4 h-4 text-primary-600" />
+              </div>
+              <h2 className="text-base font-semibold text-text-primary">Greeting Message</h2>
+            </div>
+            <p className="text-sm text-text-secondary mb-4">The first message customers see when they open the chat.</p>
+            <textarea
+              className="input-field"
+              rows={3}
+              value={settings.greeting || ''}
+              onChange={(e) => setSettings({ ...settings, greeting: e.target.value })}
+              placeholder="Hi there! Welcome to our shop..."
+            />
           </div>
-        </div>
 
-        <div className="card p-6">
-          <h2 className="text-lg font-semibold text-text-primary mb-2">Additional Instructions</h2>
-          <p className="text-sm text-text-secondary mb-4">
-            Extra instructions for the AI. For example: &quot;Always mention our loyalty program&quot; or &quot;Recommend ceramic coating to SUV owners.&quot;
-          </p>
-          <textarea
-            className="input-field"
-            rows={4}
-            value={settings.additional_instructions || ''}
-            onChange={(e) => setSettings({ ...settings, additional_instructions: e.target.value })}
-            placeholder="Any special instructions for the AI..."
-          />
+          <div className="p-6">
+            <div className="flex items-center gap-2.5 mb-4">
+              <div className="w-8 h-8 rounded-lg bg-primary-50 flex items-center justify-center shrink-0">
+                <Sparkles className="w-4 h-4 text-primary-600" />
+              </div>
+              <h2 className="text-base font-semibold text-text-primary">Tone</h2>
+            </div>
+            <div className="grid sm:grid-cols-3 gap-3">
+              {tones.map((tone) => {
+                const active = settings.tone === tone.value;
+                return (
+                  <button
+                    key={tone.value}
+                    type="button"
+                    onClick={() => setSettings({ ...settings, tone: tone.value })}
+                    className={`focus-ring relative p-4 rounded-xl border-2 text-left transition-all ${
+                      active
+                        ? 'border-primary-600 bg-primary-50 shadow-sm'
+                        : 'border-border hover:border-primary-200 hover:shadow-sm'
+                    }`}
+                  >
+                    {active && (
+                      <span className="absolute top-3 right-3 w-4 h-4 rounded-full bg-primary-600 flex items-center justify-center">
+                        <Check className="w-2.5 h-2.5 text-white" />
+                      </span>
+                    )}
+                    <p className="font-medium text-text-primary text-sm pr-5">{tone.label}</p>
+                    <p className="text-xs text-text-secondary mt-1">{tone.description}</p>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="p-6">
+            <div className="flex items-center gap-2.5 mb-2">
+              <div className="w-8 h-8 rounded-lg bg-primary-50 flex items-center justify-center shrink-0">
+                <FileText className="w-4 h-4 text-primary-600" />
+              </div>
+              <h2 className="text-base font-semibold text-text-primary">Additional Instructions</h2>
+            </div>
+            <p className="text-sm text-text-secondary mb-4">
+              Extra instructions for the AI. For example: &quot;Always mention our loyalty program&quot; or &quot;Recommend ceramic coating to SUV owners.&quot;
+            </p>
+            <textarea
+              className="input-field"
+              rows={4}
+              value={settings.additional_instructions || ''}
+              onChange={(e) => setSettings({ ...settings, additional_instructions: e.target.value })}
+              placeholder="Any special instructions for the AI..."
+            />
+          </div>
         </div>
 
         <button type="submit" disabled={saving} className="btn-primary flex items-center gap-2">
@@ -168,11 +193,27 @@ export default function AISettingsPage() {
         <p className="text-sm text-text-secondary mb-6">
           Try out your AI receptionist exactly as customers will see it, using your live business profile and settings.
         </p>
-        <ChatWidget businessId={businessId} greeting={settings.greeting} inline />
+        <div className="flex justify-center">
+          <div className="w-full max-w-[380px] rounded-[2.5rem] bg-ink-900 p-3 shadow-2xl">
+            <div className="relative rounded-[2rem] overflow-hidden bg-white">
+              <div className="absolute top-0 inset-x-0 flex justify-center pt-2.5 z-10 pointer-events-none">
+                <div className="w-20 h-5 rounded-full bg-ink-900" />
+              </div>
+              <div className="pt-6">
+                <ChatWidget businessId={businessId} greeting={settings.greeting} inline />
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div className="card p-6 mt-8">
-        <h2 className="text-lg font-semibold text-text-primary mb-2">Embed on Your Website</h2>
+        <div className="flex items-center gap-2.5 mb-2">
+          <div className="w-8 h-8 rounded-lg bg-primary-50 flex items-center justify-center shrink-0">
+            <Bot className="w-4 h-4 text-primary-600" />
+          </div>
+          <h2 className="text-lg font-semibold text-text-primary">Embed on Your Website</h2>
+        </div>
         <p className="text-sm text-text-secondary mb-4">
           Add this snippet to your website to embed the chat widget:
         </p>
