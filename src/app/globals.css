@@ -1,37 +1,116 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-primary-50: #eff6ff;
-  --color-primary-100: #dbeafe;
-  --color-primary-200: #bfdbfe;
-  --color-primary-300: #93c5fd;
-  --color-primary-400: #60a5fa;
-  --color-primary-500: #3b82f6;
-  --color-primary-600: #2563eb;
-  --color-primary-700: #1d4ed8;
-  --color-primary-800: #1e40af;
-  --color-primary-900: #1e3a8a;
+  /* ---- Ink neutral scale (graphite, replaces the ad-hoc slate hex values) ---- */
+  --color-ink-50: #f7f8fa;
+  --color-ink-100: #eef0f3;
+  --color-ink-200: #dde1e7;
+  --color-ink-300: #c2c8d1;
+  --color-ink-400: #99a1ad;
+  --color-ink-500: #707886;
+  --color-ink-600: #4f5867;
+  --color-ink-700: #394252;
+  --color-ink-800: #232a37;
+  --color-ink-900: #12161f;
+  --color-ink-950: #0a0d13;
 
-  --color-accent-50: #f0fdf4;
-  --color-accent-500: #22c55e;
-  --color-accent-600: #16a34a;
+  /* ---- Brand accent: deep indigo, deliberately distinct from every status hue ---- */
+  --color-primary-50: #eef0fb;
+  --color-primary-100: #dde2f6;
+  --color-primary-200: #b9c3ec;
+  --color-primary-300: #8f9ddd;
+  --color-primary-400: #6270c9;
+  --color-primary-500: #4152b0;
+  --color-primary-600: #333f8f;
+  --color-primary-700: #2a3374;
+  --color-primary-800: #232a5d;
+  --color-primary-900: #1e254c;
 
+  /* ---- Success accent (mirrors the "booked" status so there's one green, not two) ---- */
+  --color-accent-50: #eefaf1;
+  --color-accent-500: #1f9d55;
+  --color-accent-600: #178045;
+
+  /* ---- Semantic surface/text/border, now sourced from the ink scale ---- */
   --color-surface: #ffffff;
-  --color-surface-secondary: #f8fafc;
-  --color-surface-tertiary: #f1f5f9;
-  --color-border: #e2e8f0;
-  --color-border-light: #f1f5f9;
-  --color-text-primary: #0f172a;
-  --color-text-secondary: #475569;
-  --color-text-tertiary: #94a3b8;
+  --color-surface-secondary: var(--color-ink-50);
+  --color-surface-tertiary: var(--color-ink-100);
+  --color-border: var(--color-ink-200);
+  --color-border-light: var(--color-ink-100);
+  --color-text-primary: var(--color-ink-900);
+  --color-text-secondary: var(--color-ink-600);
+  --color-text-tertiary: var(--color-ink-400);
 
-  --color-status-new: #3b82f6;
-  --color-status-contacted: #f59e0b;
-  --color-status-qualified: #8b5cf6;
-  --color-status-booked: #22c55e;
-  --color-status-lost: #ef4444;
+  /* ---- Canonical lead-status tokens: single source of truth ----
+     Components still reference literal Tailwind color classes
+     (bg-blue-500, text-amber-700, etc.) rather than these vars directly.
+     The palette overrides just below alias those exact classes to these
+     same values so today's markup renders consistently without any JSX
+     changes. Phase 3 will point the components at status-* utilities
+     directly and these aliases can be removed. */
+  --color-status-new: #2f6fd6;
+  --color-status-contacted: #c07a12;
+  --color-status-qualified: #7250c9;
+  --color-status-booked: #1f9d55;
+  --color-status-lost: #d13b3b;
 
-  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+  /* ---- Tailwind palette aliases: only the shades the app actually uses ---- */
+  --color-blue-50: #eaf1fc;
+  --color-blue-500: #2f6fd6;
+  --color-blue-600: #2559b4;
+  --color-blue-700: #1d4890;
+
+  --color-amber-50: #fdf3e3;
+  --color-amber-500: #c07a12;
+  --color-amber-600: #a3660e;
+  --color-amber-700: #82520c;
+
+  --color-violet-50: #f2eefb;
+  --color-violet-500: #7250c9;
+  --color-violet-600: #5f3fb0;
+  --color-violet-700: #4c3391;
+
+  --color-green-50: #eafaf0;
+  --color-green-500: #1f9d55;
+  --color-green-600: #178045;
+  --color-green-700: #126838;
+
+  --color-red-50: #fdeeee;
+  --color-red-100: #fbdcdc;
+  --color-red-500: #d13b3b;
+  --color-red-600: #b52b2b;
+  --color-red-700: #942424;
+  --color-red-800: #781d1d;
+
+  /* ---- Typography: Inter, loaded for real via next/font in layout.tsx ---- */
+  --font-sans: var(--font-inter), "Inter", system-ui, -apple-system, sans-serif;
+
+  /* Line-height rhythm per size (font sizes themselves are untouched,
+     so no layout dimensions shift — only vertical rhythm improves). */
+  --text-xs--line-height: 1.4;
+  --text-sm--line-height: 1.55;
+  --text-base--line-height: 1.6;
+  --text-lg--line-height: 1.65;
+  --text-xl--line-height: 1.5;
+  --text-2xl--line-height: 1.3;
+  --text-3xl--line-height: 1.2;
+  --text-4xl--line-height: 1.1;
+  --text-5xl--line-height: 1.05;
+  --text-6xl--line-height: 1.05;
+
+  /* Slightly tighter display tracking than Tailwind's default -0.025em */
+  --tracking-tight: -0.02em;
+
+  /* ---- Radius: slightly more rectilinear than Tailwind's stock scale ---- */
+  --radius-xl: 0.625rem;
+  --radius-2xl: 0.875rem;
+
+  /* ---- Shadows: tinted toward ink instead of pure black, tighter blur ---- */
+  --shadow-sm: 0 1px 2px 0 rgb(18 22 31 / 0.06), 0 1px 1px -1px rgb(18 22 31 / 0.04);
+  --shadow-md: 0 3px 8px -2px rgb(18 22 31 / 0.10), 0 1px 3px -1px rgb(18 22 31 / 0.06);
+  --shadow-lg: 0 8px 20px -4px rgb(18 22 31 / 0.12), 0 3px 6px -3px rgb(18 22 31 / 0.06);
+  --shadow-xl: 0 16px 32px -8px rgb(18 22 31 / 0.16), 0 6px 12px -6px rgb(18 22 31 / 0.08);
+  --shadow-2xl: 0 24px 48px -12px rgb(18 22 31 / 0.22);
 }
 
 @layer base {
@@ -42,33 +121,48 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
+
+  /* Consistent focus treatment: keyboard-only outline for anything that
+     doesn't already define its own focus-visible ring (nav links, footer
+     links, etc.). Elements with an explicit focus-visible ring below
+     (buttons, inputs) take precedence via layer order. */
+  :focus {
+    outline: none;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-primary-500);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+  }
 }
 
 @layer components {
   .btn-primary {
-    @apply bg-primary-600 text-white px-5 py-2.5 rounded-lg font-medium
+    @apply bg-primary-600 text-white px-5 py-2.5 rounded-lg font-semibold tracking-tight
       hover:bg-primary-700 active:bg-primary-800 transition-colors
       disabled:opacity-50 disabled:cursor-not-allowed
-      focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2;
+      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2;
   }
 
   .btn-secondary {
-    @apply bg-white text-text-primary border border-border px-5 py-2.5 rounded-lg font-medium
+    @apply bg-white text-text-primary border border-border px-5 py-2.5 rounded-lg font-semibold tracking-tight
       hover:bg-surface-tertiary active:bg-surface-tertiary transition-colors
       disabled:opacity-50 disabled:cursor-not-allowed
-      focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2;
+      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2;
   }
 
   .btn-danger {
-    @apply bg-red-600 text-white px-5 py-2.5 rounded-lg font-medium
+    @apply bg-red-600 text-white px-5 py-2.5 rounded-lg font-semibold tracking-tight
       hover:bg-red-700 active:bg-red-800 transition-colors
-      disabled:opacity-50 disabled:cursor-not-allowed;
+      disabled:opacity-50 disabled:cursor-not-allowed
+      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2;
   }
 
   .input-field {
     @apply w-full px-3.5 py-2.5 bg-white border border-border rounded-lg text-text-primary
       placeholder:text-text-tertiary
-      focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500
+      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:border-primary-500
       transition-colors;
   }
 
@@ -77,6 +171,12 @@
   }
 
   .status-badge {
-    @apply inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold;
+    @apply inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold tracking-wide;
+  }
+
+  /* Reusable focus-ring recipe for Phase 2+ to adopt in place of the
+     repeated inline focus-visible:* utility chains above. */
+  .focus-ring {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2;
   }
 }
