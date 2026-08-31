@@ -55,9 +55,15 @@ ${faqsText ? `FREQUENTLY ASKED QUESTIONS:\n${faqsText}` : ''}
 ${(aiSettings.additional_instructions as string) ? `ADDITIONAL INSTRUCTIONS:\n${aiSettings.additional_instructions}` : ''}
 
 When you've collected customer information during the conversation, include a JSON block at the end of your response (hidden from the customer) in this exact format:
-<!--LEAD_DATA:{"name":"","phone":"","email":"","vehicle":"","service_requested":"","preferred_date":""}-->
+<!--LEAD_DATA:{"name":"","phone":"","email":"","vehicle":"","service_requested":"","preferred_date":"","lead_score":0,"intent":"","qualification":""}-->
 Only include fields that the customer has actually provided. Update this block whenever you learn new information.
-preferred_date MUST be a specific calendar date in YYYY-MM-DD format — use TODAY'S DATE above to resolve relative phrases like "this Saturday" or "next Tuesday" into an actual date. If you don't yet know a specific date, leave preferred_date as an empty string rather than writing a relative phrase.`;
+preferred_date MUST be a specific calendar date in YYYY-MM-DD format — use TODAY'S DATE above to resolve relative phrases like "this Saturday" or "next Tuesday" into an actual date. If you don't yet know a specific date, leave preferred_date as an empty string rather than writing a relative phrase.
+
+You must also score the lead on every turn:
+- intent: one of "inquiry" (just asking questions), "booking" (trying to schedule an appointment), "quote" (asking for pricing/estimate), or "other".
+- lead_score: an integer 0-100 reflecting how sales-ready this lead is. Increase the score for: providing contact info (phone/email), naming a specific service, giving a preferred date, expressing clear buying intent (e.g. "I want to book", "can I come in"), and booking intent generally. Keep the score low for vague browsing or early-stage questions with no contact info.
+- qualification: derived from lead_score — 0-49 is "cold", 50-79 is "warm", 80-100 is "hot".
+Always include lead_score, intent, and qualification in the LEAD_DATA block once you have said anything meaningful about the customer, and update them as the conversation develops.`;
 }
 
 async function callAI(systemPrompt: string, messages: Array<{ role: string; content: string }>): Promise<string> {
@@ -155,7 +161,7 @@ function generateFallbackResponse(
   return "Thanks for reaching out! I can help with services, pricing, business hours, and appointments. What would you like to know?";
 }
 
-function extractLeadData(text: string): Record<string, string> | null {
+function extractLeadData(text: string): Record<string, unknown> | null {
   const match = text.match(/<!--LEAD_DATA:([\s\S]*?)-->/);
   if (!match) return null;
   try {
@@ -174,6 +180,27 @@ function toIsoDateOrNull(value: unknown): string | null {
   const trimmed = value.trim();
   if (!/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) return null;
   return Number.isNaN(new Date(`${trimmed}T00:00:00Z`).getTime()) ? null : trimmed;
+}
+
+const LEAD_INTENTS = ['inquiry', 'booking', 'quote', 'other'] as const;
+type LeadIntentValue = (typeof LEAD_INTENTS)[number];
+
+function toLeadIntentOrNull(value: unknown): LeadIntentValue | null {
+  return typeof value === 'string' && (LEAD_INTENTS as readonly string[]).includes(value)
+    ? (value as LeadIntentValue)
+    : null;
+}
+
+function toLeadScoreOrNull(value: unknown): number | null {
+  const num = typeof value === 'number' ? value : typeof value === 'string' ? Number(value) : NaN;
+  if (!Number.isFinite(num)) return null;
+  return Math.max(0, Math.min(100, Math.round(num)));
+}
+
+function qualificationFromScore(score: number): 'hot' | 'warm' | 'cold' {
+  if (score >= 80) return 'hot';
+  if (score >= 50) return 'warm';
+  return 'cold';
 }
 
 export async function GET(request: NextRequest) {
@@ -301,6 +328,17 @@ export async function POST(request: NextRequest) {
       console.error('Failed to save assistant message:', assistantMsgError);
     }
 
+    const name = typeof leadData?.name === 'string' ? leadData.name : '';
+    const phone = typeof leadData?.phone === 'string' ? leadData.phone : '';
+    const email = typeof leadData?.email === 'string' ? leadData.email : '';
+    const vehicle = typeof leadData?.vehicle === 'string' ? leadData.vehicle : '';
+    const serviceRequested = typeof leadData?.service_requested === 'string' ? leadData.service_requested : '';
+    const preferredDateRaw = typeof leadData?.preferred_date === 'string' ? leadData.preferred_date : '';
+    const isoDate = toIsoDateOrNull(preferredDateRaw);
+    const leadScore = leadData ? toLeadScoreOrNull(leadData.lead_score) : null;
+    const intent = leadData ? toLeadIntentOrNull(leadData.intent) : null;
+    const qualification = leadScore !== null ? qualificationFromScore(leadScore) : null;
+
     if (leadData && Object.values(leadData).some((v) => v)) {
       const { data: existingConv, error: existingConvError } = await supabase
         .from('conversations')
@@ -313,14 +351,16 @@ export async function POST(request: NextRequest) {
       }
 
       if (existingConv?.lead_id) {
-        const updateData: Record<string, string> = {};
-        if (leadData.name) updateData.name = leadData.name;
-        if (leadData.phone) updateData.phone = leadData.phone;
-        if (leadData.email) updateData.email = leadData.email;
-        if (leadData.vehicle) updateData.vehicle = leadData.vehicle;
-        if (leadData.service_requested) updateData.service_requested = leadData.service_requested;
-        const isoDate = toIsoDateOrNull(leadData.preferred_date);
+        const updateData: Record<string, string | number> = {};
+        if (name) updateData.name = name;
+        if (phone) updateData.phone = phone;
+        if (email) updateData.email = email;
+        if (vehicle) updateData.vehicle = vehicle;
+        if (serviceRequested) updateData.service_requested = serviceRequested;
         if (isoDate) updateData.preferred_date = isoDate;
+        if (leadScore !== null) updateData.lead_score = leadScore;
+        if (intent) updateData.intent = intent;
+        if (qualification) updateData.qualification = qualification;
 
         const { error: updateLeadError } = await supabase
           .from('leads')
@@ -331,20 +371,21 @@ export async function POST(request: NextRequest) {
           console.error('Failed to update lead:', updateLeadError);
         }
       } else {
-        const isoDate = toIsoDateOrNull(leadData.preferred_date);
-
         const { data: newLead, error: newLeadError } = await supabase
           .from('leads')
           .insert({
             business_id: businessId,
-            name: leadData.name || '',
-            phone: leadData.phone || '',
-            email: leadData.email || '',
-            vehicle: leadData.vehicle || '',
-            service_requested: leadData.service_requested || '',
+            name,
+            phone,
+            email,
+            vehicle,
+            service_requested: serviceRequested,
             preferred_date: isoDate,
-            notes: !isoDate && leadData.preferred_date ? `Requested date: ${leadData.preferred_date}` : '',
+            notes: !isoDate && preferredDateRaw ? `Requested date: ${preferredDateRaw}` : '',
             status: 'new',
+            lead_score: leadScore ?? 0,
+            intent: intent ?? 'inquiry',
+            qualification: qualification ?? 'cold',
           })
           .select()
           .single();
@@ -354,7 +395,7 @@ export async function POST(request: NextRequest) {
         } else if (newLead) {
           const { error: linkError } = await supabase
             .from('conversations')
-            .update({ lead_id: newLead.id, visitor_name: leadData.name || null })
+            .update({ lead_id: newLead.id, visitor_name: name || null })
             .eq('id', convId);
 
           if (linkError) {
@@ -364,10 +405,10 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    if (leadData?.name) {
+    if (name) {
       const { error: nameError } = await supabase
         .from('conversations')
-        .update({ visitor_name: leadData.name })
+        .update({ visitor_name: name })
         .eq('id', convId);
 
       if (nameError) {

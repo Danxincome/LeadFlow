@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { StatusBadge } from '@/components/ui/status-badge';
+import { QualificationBadge } from '@/components/ui/qualification-badge';
 import { EmptyState } from '@/components/ui/empty-state';
 import { Spinner, PageLoading } from '@/components/ui/loading';
 import type { Lead, LeadStatus } from '@/lib/types';
@@ -142,6 +143,19 @@ function LeadModal({
               placeholder="Any additional notes..."
             />
           </div>
+          {isView && (
+            <div className="pt-2 border-t border-border space-y-3">
+              <div className="flex items-center gap-3">
+                <span className="text-sm font-medium text-text-primary">Lead Score:</span>
+                <span className="text-sm text-text-secondary">{form.lead_score ?? '—'}</span>
+                {form.qualification && <QualificationBadge qualification={form.qualification} />}
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-medium text-text-primary">Intent:</span>
+                <span className="text-sm text-text-secondary capitalize">{form.intent || '—'}</span>
+              </div>
+            </div>
+          )}
           {isView && form.created_at && (
             <div className="pt-2 border-t border-border">
               <p className="text-xs text-text-tertiary">
@@ -319,6 +333,8 @@ function LeadsPage() {
                   <th className="text-left text-xs font-medium text-text-secondary uppercase tracking-wider px-6 py-3 hidden md:table-cell">Service</th>
                   <th className="text-left text-xs font-medium text-text-secondary uppercase tracking-wider px-6 py-3 hidden lg:table-cell">Vehicle</th>
                   <th className="text-left text-xs font-medium text-text-secondary uppercase tracking-wider px-6 py-3">Status</th>
+                  <th className="text-left text-xs font-medium text-text-secondary uppercase tracking-wider px-6 py-3 hidden md:table-cell">Score</th>
+                  <th className="text-left text-xs font-medium text-text-secondary uppercase tracking-wider px-6 py-3 hidden lg:table-cell">Intent</th>
                   <th className="text-left text-xs font-medium text-text-secondary uppercase tracking-wider px-6 py-3 hidden sm:table-cell">Date</th>
                   <th className="text-right text-xs font-medium text-text-secondary uppercase tracking-wider px-6 py-3">Actions</th>
                 </tr>
@@ -335,6 +351,13 @@ function LeadsPage() {
                     <td className="px-6 py-4 hidden md:table-cell text-sm text-text-secondary">{lead.service_requested || '—'}</td>
                     <td className="px-6 py-4 hidden lg:table-cell text-sm text-text-secondary">{lead.vehicle || '—'}</td>
                     <td className="px-6 py-4"><StatusBadge status={lead.status as LeadStatus} /></td>
+                    <td className="px-6 py-4 hidden md:table-cell">
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm text-text-secondary">{lead.lead_score ?? '—'}</span>
+                        {lead.qualification && <QualificationBadge qualification={lead.qualification} />}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 hidden lg:table-cell text-sm text-text-secondary capitalize">{lead.intent || '—'}</td>
                     <td className="px-6 py-4 hidden sm:table-cell text-sm text-text-secondary">
                       {new Date(lead.created_at).toLocaleDateString()}
                     </td>

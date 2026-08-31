@@ -1,5 +1,8 @@
 export type LeadStatus = 'new' | 'contacted' | 'qualified' | 'booked' | 'lost';
 
+export type LeadIntent = 'inquiry' | 'booking' | 'quote' | 'other';
+export type LeadQualification = 'hot' | 'warm' | 'cold';
+
 export interface Business {
   id: string;
   user_id: string;
@@ -42,6 +45,9 @@ export interface Lead {
   vehicle: string;
   preferred_date: string | null;
   status: LeadStatus;
+  lead_score: number;
+  intent: LeadIntent;
+  qualification: LeadQualification;
   notes: string;
   created_at: string;
   updated_at: string;
