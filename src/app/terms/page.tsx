@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
-import { Zap, ArrowLeft } from 'lucide-react';
+import { Zap, ArrowLeft, ScrollText } from 'lucide-react';
 import { SiteFooter } from '@/components/layout/site-footer';
 
 export const metadata: Metadata = {
@@ -10,8 +10,8 @@ export const metadata: Metadata = {
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <section className="mb-8">
-      <h2 className="text-lg font-semibold text-text-primary mb-3">{title}</h2>
+    <section className="mb-8 pb-8 border-b border-border-light last:border-0 last:mb-0 last:pb-0">
+      <h2 className="text-lg font-semibold text-text-primary mb-3 pl-3 border-l-2 border-primary-200">{title}</h2>
       <div className="space-y-3 text-sm text-text-secondary leading-relaxed">{children}</div>
     </section>
   );
@@ -37,10 +37,13 @@ export default function TermsOfServicePage() {
       </nav>
 
       <div className="max-w-3xl mx-auto px-4 py-12">
+        <div className="w-12 h-12 rounded-xl bg-primary-50 flex items-center justify-center mb-5">
+          <ScrollText className="w-6 h-6 text-primary-600" />
+        </div>
         <h1 className="text-3xl font-bold text-text-primary mb-2">Terms of Service</h1>
         <p className="text-sm text-text-tertiary mb-8">Last updated: August 23, 2026</p>
 
-        <div className="card p-4 mb-8 bg-primary-50 border-primary-100">
+        <div className="card p-4 mb-10 bg-primary-50 border-primary-100">
           <p className="text-sm text-text-secondary leading-relaxed">
             These Terms of Service (&quot;Terms&quot;) are general product terms for the LeadFlow AI platform (&quot;LeadFlow,&quot;
             &quot;we,&quot; &quot;us&quot;). They govern use of the LeadFlow dashboard and chatbot by businesses (&quot;Business
