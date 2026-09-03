@@ -153,11 +153,11 @@ export default function SignupPage() {
 
           <p className="text-center text-xs text-text-tertiary mt-4">
             By creating an account, you agree to our{' '}
-            <Link href="/terms" className="text-primary-600 hover:text-primary-700 font-medium">
+            <Link href="/terms" className="text-primary-600 hover:text-primary-700 font-medium transition-colors">
               Terms of Service
             </Link>{' '}
             and{' '}
-            <Link href="/privacy" className="text-primary-600 hover:text-primary-700 font-medium">
+            <Link href="/privacy" className="text-primary-600 hover:text-primary-700 font-medium transition-colors">
               Privacy Policy
             </Link>
             .
@@ -165,7 +165,7 @@ export default function SignupPage() {
 
           <p className="text-center text-sm text-text-secondary mt-6">
             Already have an account?{' '}
-            <Link href="/auth/login" className="text-primary-600 hover:text-primary-700 font-medium">
+            <Link href="/auth/login" className="text-primary-600 hover:text-primary-700 font-medium transition-colors">
               Sign in
             </Link>
           </p>

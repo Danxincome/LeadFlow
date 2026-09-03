@@ -53,7 +53,7 @@ export function UserMenu({ email, onLogout }: UserMenuProps) {
       </button>
 
       {open && (
-        <div className="absolute bottom-full left-0 mb-2 w-full min-w-[14rem] overflow-hidden rounded-xl border border-border bg-white shadow-lg">
+        <div className="animate-dropdown-in absolute bottom-full left-0 mb-2 w-full min-w-[14rem] overflow-hidden rounded-xl border border-border bg-white shadow-lg">
           <div className="border-b border-border-light px-3 py-2.5">
             <p className="text-xs text-text-tertiary">Signed in as</p>
             <p className="truncate text-sm font-medium text-text-primary">{email}</p>

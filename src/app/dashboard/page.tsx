@@ -2,9 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Users, UserPlus, TrendingUp, DollarSign, Clock, ArrowUpRight } from 'lucide-react';
+import { Users, UserPlus, TrendingUp, DollarSign, ArrowUpRight } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { StatusBadge } from '@/components/ui/status-badge';
+import { EmptyState } from '@/components/ui/empty-state';
 import { PageLoading } from '@/components/ui/loading';
 import type { Lead, LeadStatus } from '@/lib/types';
 
@@ -86,15 +87,13 @@ export default function DashboardPage() {
 
   if (!hasBusinessProfile) {
     return (
-      <div className="max-w-lg mx-auto text-center py-20">
-        <div className="w-16 h-16 rounded-2xl bg-primary-50 flex items-center justify-center mx-auto mb-4">
-          <Users className="w-8 h-8 text-primary-500" />
-        </div>
-        <h2 className="text-2xl font-bold text-text-primary mb-2">Welcome to LeadFlow AI!</h2>
-        <p className="text-text-secondary mb-6">Let&apos;s set up your business profile so the AI can start helping your customers.</p>
-        <button onClick={() => router.push('/dashboard/onboarding')} className="btn-primary">
-          Set Up Business Profile
-        </button>
+      <div className="max-w-lg mx-auto mt-8">
+        <EmptyState
+          icon={Users}
+          title="Welcome to LeadFlow AI!"
+          description="Let's set up your business profile so the AI can start helping your customers."
+          action={{ label: 'Set Up Business Profile', onClick: () => router.push('/dashboard/onboarding') }}
+        />
       </div>
     );
   }
@@ -148,7 +147,8 @@ export default function DashboardPage() {
                     <StatusBadge status={lead.status as LeadStatus} />
                     <button
                       onClick={() => router.push(`/dashboard/leads?id=${lead.id}`)}
-                      className="p-1.5 text-text-tertiary hover:text-primary-600 transition-colors"
+                      aria-label={`View ${lead.name || 'lead'}`}
+                      className="focus-ring rounded-md p-1.5 text-text-tertiary hover:text-primary-600 transition-colors"
                     >
                       <ArrowUpRight className="w-4 h-4" />
                     </button>

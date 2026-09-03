@@ -40,7 +40,7 @@ function MoveMenu({ current, onMove }: { current: LeadStatus; onMove: (status: L
         <MoreHorizontal className="w-4 h-4" />
       </button>
       {open && (
-        <div className="absolute right-0 z-10 mt-1 w-40 rounded-lg border border-border bg-white shadow-lg overflow-hidden">
+        <div className="animate-dropdown-in absolute right-0 z-10 mt-1 w-40 rounded-lg border border-border bg-white shadow-lg overflow-hidden">
           <p className="px-3 py-2 text-xs font-semibold uppercase tracking-wide text-text-tertiary border-b border-border-light">
             Move to
           </p>
@@ -68,7 +68,6 @@ function MoveMenu({ current, onMove }: { current: LeadStatus; onMove: (status: L
 export default function PipelinePage() {
   const [leads, setLeads] = useState<Lead[]>([]);
   const [loading, setLoading] = useState(true);
-  const [businessId, setBusinessId] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -87,8 +86,6 @@ export default function PipelinePage() {
         router.push('/dashboard/onboarding');
         return;
       }
-
-      setBusinessId(business.id);
 
       const { data } = await supabase
         .from('leads')

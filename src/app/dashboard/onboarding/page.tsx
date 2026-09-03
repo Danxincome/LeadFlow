@@ -204,6 +204,7 @@ export default function OnboardingPage() {
                   <input
                     className="input-field"
                     placeholder="Service name"
+                    aria-label={`Service ${i + 1} name`}
                     value={service.name}
                     onChange={(e) => {
                       const updated = [...services];
@@ -214,6 +215,7 @@ export default function OnboardingPage() {
                   <input
                     className="input-field"
                     placeholder="Description"
+                    aria-label={`Service ${i + 1} description`}
                     value={service.description}
                     onChange={(e) => {
                       const updated = [...services];
@@ -224,6 +226,7 @@ export default function OnboardingPage() {
                   <input
                     className="input-field"
                     placeholder="Price (e.g. $99)"
+                    aria-label={`Service ${i + 1} price`}
                     value={service.price}
                     onChange={(e) => {
                       const updated = [...services];
@@ -236,7 +239,8 @@ export default function OnboardingPage() {
                   <button
                     type="button"
                     onClick={() => setServices(services.filter((_, idx) => idx !== i))}
-                    className="p-2 text-text-tertiary hover:text-red-500 transition-colors mt-1"
+                    aria-label={`Remove service ${i + 1}`}
+                    className="focus-ring rounded-md p-2 text-text-tertiary hover:text-red-500 transition-colors mt-1"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
@@ -255,7 +259,7 @@ export default function OnboardingPage() {
           </div>
           <div className="space-y-3">
             {DAYS.map((day) => (
-              <div key={day} className="flex items-center gap-4">
+              <div key={day} className="flex flex-wrap items-center gap-x-4 gap-y-2 sm:flex-nowrap">
                 <div className="w-28">
                   <span className="text-sm font-medium text-text-primary capitalize">{day}</span>
                 </div>
@@ -266,7 +270,8 @@ export default function OnboardingPage() {
                     onChange={(e) =>
                       setHours({ ...hours, [day]: { ...hours[day], closed: !e.target.checked } })
                     }
-                    className="w-4 h-4 rounded border-border text-primary-600 focus:ring-primary-500"
+                    aria-label={`${day} open`}
+                    className="w-4 h-4 rounded border-border text-primary-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
                   />
                   <span className="text-sm text-text-secondary">Open</span>
                 </label>
@@ -275,6 +280,7 @@ export default function OnboardingPage() {
                     <input
                       type="time"
                       className="input-field py-1.5 text-sm"
+                      aria-label={`${day} opening time`}
                       value={hours[day]?.open || '09:00'}
                       onChange={(e) =>
                         setHours({ ...hours, [day]: { ...hours[day], open: e.target.value } })
@@ -284,6 +290,7 @@ export default function OnboardingPage() {
                     <input
                       type="time"
                       className="input-field py-1.5 text-sm"
+                      aria-label={`${day} closing time`}
                       value={hours[day]?.close || '17:00'}
                       onChange={(e) =>
                         setHours({ ...hours, [day]: { ...hours[day], close: e.target.value } })
@@ -336,6 +343,7 @@ export default function OnboardingPage() {
                   <input
                     className="input-field"
                     placeholder="Question"
+                    aria-label={`FAQ ${i + 1} question`}
                     value={faq.question}
                     onChange={(e) => {
                       const updated = [...faqs];
@@ -347,6 +355,7 @@ export default function OnboardingPage() {
                     className="input-field"
                     rows={2}
                     placeholder="Answer"
+                    aria-label={`FAQ ${i + 1} answer`}
                     value={faq.answer}
                     onChange={(e) => {
                       const updated = [...faqs];
@@ -359,7 +368,8 @@ export default function OnboardingPage() {
                   <button
                     type="button"
                     onClick={() => setFaqs(faqs.filter((_, idx) => idx !== i))}
-                    className="p-2 text-text-tertiary hover:text-red-500 transition-colors mt-1"
+                    aria-label={`Remove FAQ ${i + 1}`}
+                    className="focus-ring rounded-md p-2 text-text-tertiary hover:text-red-500 transition-colors mt-1"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>

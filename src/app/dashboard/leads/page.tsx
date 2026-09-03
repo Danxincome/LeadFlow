@@ -47,13 +47,17 @@ function LeadModal({
   const isView = mode === 'view';
 
   return (
-    <div className="fixed inset-0 bg-ink-950/50 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-xl border border-border shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+    <div className="animate-overlay-in fixed inset-0 bg-ink-950/50 z-50 flex items-center justify-center p-4">
+      <div className="animate-panel-in bg-white rounded-xl border border-border shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between px-6 py-4 border-b border-border">
           <h2 className="text-lg font-semibold text-text-primary">
             {mode === 'create' ? 'New Lead' : mode === 'edit' ? 'Edit Lead' : 'Lead Details'}
           </h2>
-          <button onClick={onClose} className="focus-ring p-1.5 rounded-md text-text-tertiary hover:text-text-primary hover:bg-surface-tertiary transition-colors">
+          <button
+            onClick={onClose}
+            aria-label="Close"
+            className="focus-ring p-1.5 rounded-md text-text-tertiary hover:text-text-primary hover:bg-surface-tertiary transition-colors"
+          >
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -296,6 +300,7 @@ function LeadsPage() {
             <input
               className="input-field pl-9"
               placeholder="Search leads..."
+              aria-label="Search leads"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
@@ -303,6 +308,7 @@ function LeadsPage() {
           <div className="relative">
             <select
               className="input-field appearance-none pr-8"
+              aria-label="Filter by status"
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value as LeadStatus | '')}
             >
@@ -380,6 +386,7 @@ function LeadsPage() {
                           onClick={() => setModal({ mode: 'view', lead })}
                           className="focus-ring p-1.5 rounded-md text-text-tertiary hover:text-primary-600 hover:bg-surface-tertiary transition-colors"
                           title="View"
+                          aria-label={`View ${lead.name || 'lead'}`}
                         >
                           <Eye className="w-4 h-4" />
                         </button>
@@ -387,6 +394,7 @@ function LeadsPage() {
                           onClick={() => setModal({ mode: 'edit', lead })}
                           className="focus-ring p-1.5 rounded-md text-text-tertiary hover:text-primary-600 hover:bg-surface-tertiary transition-colors"
                           title="Edit"
+                          aria-label={`Edit ${lead.name || 'lead'}`}
                         >
                           <Pencil className="w-4 h-4" />
                         </button>
@@ -394,6 +402,7 @@ function LeadsPage() {
                           onClick={() => setDeleteConfirm(lead.id)}
                           className="focus-ring p-1.5 rounded-md text-text-tertiary hover:text-red-500 hover:bg-surface-tertiary transition-colors"
                           title="Delete"
+                          aria-label={`Delete ${lead.name || 'lead'}`}
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
@@ -418,8 +427,8 @@ function LeadsPage() {
       )}
 
       {deleteConfirm && (
-        <div className="fixed inset-0 bg-ink-950/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl border border-border shadow-2xl w-full max-w-sm p-6">
+        <div className="animate-overlay-in fixed inset-0 bg-ink-950/50 z-50 flex items-center justify-center p-4">
+          <div className="animate-panel-in bg-white rounded-xl border border-border shadow-2xl w-full max-w-sm p-6">
             <h3 className="text-lg font-semibold text-text-primary mb-2">Delete Lead?</h3>
             <p className="text-sm text-text-secondary mb-6">This action cannot be undone.</p>
             <div className="flex justify-end gap-3">

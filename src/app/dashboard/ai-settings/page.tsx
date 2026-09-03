@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Save, Check, Bot, MessageSquare, Sparkles, FileText } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { Spinner, PageLoading } from '@/components/ui/loading';
+import { EmptyState } from '@/components/ui/empty-state';
 import { ChatWidget } from '@/components/chat/chat-widget';
 import type { AISettings } from '@/lib/types';
 
@@ -92,12 +93,12 @@ export default function AISettingsPage() {
 
   if (!businessId) {
     return (
-      <div className="max-w-lg mx-auto text-center py-20">
-        <div className="w-16 h-16 rounded-2xl bg-primary-50 flex items-center justify-center mx-auto mb-4">
-          <Bot className="w-8 h-8 text-primary-500" />
-        </div>
-        <h2 className="text-xl font-bold text-text-primary mb-2">Set up your business first</h2>
-        <p className="text-text-secondary mb-6">You need to create a business profile before configuring AI settings.</p>
+      <div className="max-w-lg mx-auto mt-8">
+        <EmptyState
+          icon={Bot}
+          title="Set up your business first"
+          description="You need to create a business profile before configuring AI settings."
+        />
       </div>
     );
   }

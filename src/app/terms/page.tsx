@@ -90,7 +90,7 @@ export default function TermsOfServicePage() {
         <Section title="4. AI-Generated Content; No Guarantee of Accuracy">
           <p>
             The chatbot uses artificial intelligence (currently Google&apos;s Gemini API, as described in our{' '}
-            <Link href="/privacy" className="text-primary-600 hover:text-primary-700 font-medium">
+            <Link href="/privacy" className="text-primary-600 hover:text-primary-700 font-medium transition-colors">
               Privacy Policy
             </Link>
             ) to generate responses automatically. While the chatbot is designed to answer based only on the business information
@@ -174,7 +174,7 @@ export default function TermsOfServicePage() {
             LeadFlow AI is operated by <span className="font-medium text-text-primary">[LEGAL BUSINESS NAME]</span>. If you have
             questions about these Terms, please contact us at{' '}
             <span className="font-medium text-text-primary">[SUPPORT EMAIL]</span>. For privacy-related requests, see our{' '}
-            <Link href="/privacy" className="text-primary-600 hover:text-primary-700 font-medium">
+            <Link href="/privacy" className="text-primary-600 hover:text-primary-700 font-medium transition-colors">
               Privacy Policy
             </Link>
             .

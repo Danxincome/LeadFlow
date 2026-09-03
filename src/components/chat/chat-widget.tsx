@@ -123,6 +123,7 @@ export function ChatWidget({ businessId, greeting, inline = false }: ChatWidgetP
         {!inline && (
           <button
             onClick={() => setOpen(false)}
+            aria-label="Close chat"
             className="focus-ring p-1.5 rounded-md hover:bg-white/10 transition-colors"
           >
             <X className="w-5 h-5" />
@@ -134,7 +135,7 @@ export function ChatWidget({ businessId, greeting, inline = false }: ChatWidgetP
         <p className="text-[11px] text-text-tertiary leading-snug">
           This chat is powered by AI. Messages you provide may be processed by LeadFlow and its AI service providers to
           provide responses and support your request.{' '}
-          <Link href="/privacy" className="underline hover:text-text-secondary">
+          <Link href="/privacy" className="underline hover:text-text-secondary transition-colors">
             Privacy Policy
           </Link>
         </p>
@@ -192,12 +193,14 @@ export function ChatWidget({ businessId, greeting, inline = false }: ChatWidgetP
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Type a message..."
+            aria-label="Message"
             className="flex-1 px-3.5 py-2.5 bg-surface-secondary rounded-xl text-sm text-text-primary placeholder:text-text-tertiary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 transition-shadow"
             disabled={loading}
           />
           <button
             type="submit"
             disabled={loading || !input.trim()}
+            aria-label="Send message"
             className="focus-ring w-10 h-10 bg-primary-600 text-white rounded-xl flex items-center justify-center hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
           >
             {loading ? <Spinner size="sm" /> : <Send className="w-4 h-4" />}
@@ -221,7 +224,7 @@ export function ChatWidget({ businessId, greeting, inline = false }: ChatWidgetP
   return (
     <>
       {open && (
-        <div className="fixed bottom-20 right-4 z-50 w-[380px] max-w-[calc(100vw-2rem)]">
+        <div className="animate-panel-in fixed bottom-20 right-4 z-50 w-[380px] max-w-[calc(100vw-2rem)]">
           <div className="card overflow-hidden rounded-2xl shadow-2xl border-border-light">
             {chatContent}
           </div>
@@ -229,6 +232,8 @@ export function ChatWidget({ businessId, greeting, inline = false }: ChatWidgetP
       )}
       <button
         onClick={toggleOpen}
+        aria-label={open ? 'Close chat' : 'Open chat'}
+        aria-expanded={open}
         className="focus-ring fixed bottom-4 right-4 z-50 w-14 h-14 bg-primary-600 text-white rounded-full shadow-xl hover:bg-primary-700 transition-all hover:scale-105 flex items-center justify-center"
       >
         {open ? <X className="w-6 h-6" /> : <MessageSquare className="w-6 h-6" />}

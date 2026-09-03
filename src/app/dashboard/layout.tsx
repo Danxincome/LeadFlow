@@ -80,7 +80,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     <div className="flex h-screen bg-surface-secondary">
       {sidebarOpen && (
         <div
-          className="fixed inset-0 z-40 bg-ink-950/50 transition-opacity lg:hidden"
+          className="animate-overlay-in fixed inset-0 z-40 bg-ink-950/50 lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}
@@ -99,7 +99,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </Link>
           <button
             onClick={() => setSidebarOpen(false)}
-            className="p-1 text-text-secondary hover:text-text-primary lg:hidden"
+            aria-label="Close navigation menu"
+            className="focus-ring rounded-md p-1 text-text-secondary transition-colors hover:text-text-primary lg:hidden"
           >
             <X className="h-5 w-5" />
           </button>
@@ -144,7 +145,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <header className="flex h-16 shrink-0 items-center gap-3 border-b border-border bg-white px-4 lg:px-8">
           <button
             onClick={() => setSidebarOpen(true)}
-            className="-ml-2 p-2 text-text-secondary hover:text-text-primary lg:hidden"
+            aria-label="Open navigation menu"
+            aria-expanded={sidebarOpen}
+            className="focus-ring -ml-2 rounded-md p-2 text-text-secondary transition-colors hover:text-text-primary lg:hidden"
           >
             <Menu className="h-5 w-5" />
           </button>
