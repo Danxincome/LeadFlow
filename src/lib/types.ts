@@ -81,6 +81,29 @@ export interface Message {
   created_at: string;
 }
 
+export type SubscriptionStatus =
+  | 'incomplete'
+  | 'incomplete_expired'
+  | 'trialing'
+  | 'active'
+  | 'past_due'
+  | 'canceled'
+  | 'unpaid'
+  | 'paused';
+
+export interface Subscription {
+  id: string;
+  business_id: string;
+  stripe_customer_id: string;
+  stripe_subscription_id: string | null;
+  stripe_price_id: string | null;
+  status: SubscriptionStatus;
+  current_period_end: string | null;
+  cancel_at_period_end: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface DashboardStats {
   total_leads: number;
   new_leads: number;

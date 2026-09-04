@@ -13,6 +13,7 @@ import {
   Menu,
   X,
   Building2,
+  CreditCard,
 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { UserMenu } from '@/components/layout/user-menu';
@@ -36,6 +37,10 @@ const navGroups = [
       { name: 'AI Settings', href: '/dashboard/ai-settings', icon: Bot },
       { name: 'Business Profile', href: '/dashboard/onboarding', icon: Building2 },
     ],
+  },
+  {
+    label: 'Account',
+    items: [{ name: 'Billing', href: '/dashboard/billing', icon: CreditCard }],
   },
 ];
 
