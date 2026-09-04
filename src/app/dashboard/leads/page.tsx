@@ -14,6 +14,14 @@ import type { Lead, LeadStatus } from '@/lib/types';
 
 const statuses: LeadStatus[] = ['new', 'contacted', 'qualified', 'booked', 'lost'];
 
+function getInitials(name: string): string {
+  const trimmed = name.trim();
+  if (!trimmed) return '?';
+  const parts = trimmed.split(/\s+/).filter(Boolean);
+  const initials = parts.length > 1 ? `${parts[0][0]}${parts[parts.length - 1][0]}` : trimmed.slice(0, 2);
+  return initials.toUpperCase();
+}
+
 export default function LeadsPageWrapper() {
   return (
     <Suspense fallback={<PageLoading />}>
@@ -39,13 +47,17 @@ function LeadModal({
   const isView = mode === 'view';
 
   return (
-    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+    <div className="animate-overlay-in fixed inset-0 bg-ink-950/50 z-50 flex items-center justify-center p-4">
+      <div className="animate-panel-in bg-white rounded-xl border border-border shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between px-6 py-4 border-b border-border">
           <h2 className="text-lg font-semibold text-text-primary">
             {mode === 'create' ? 'New Lead' : mode === 'edit' ? 'Edit Lead' : 'Lead Details'}
           </h2>
-          <button onClick={onClose} className="p-1.5 text-text-tertiary hover:text-text-primary transition-colors">
+          <button
+            onClick={onClose}
+            aria-label="Close"
+            className="focus-ring p-1.5 rounded-md text-text-tertiary hover:text-text-primary hover:bg-surface-tertiary transition-colors"
+          >
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -288,6 +300,7 @@ function LeadsPage() {
             <input
               className="input-field pl-9"
               placeholder="Search leads..."
+              aria-label="Search leads"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
@@ -295,6 +308,7 @@ function LeadsPage() {
           <div className="relative">
             <select
               className="input-field appearance-none pr-8"
+              aria-label="Filter by status"
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value as LeadStatus | '')}
             >
@@ -329,58 +343,66 @@ function LeadsPage() {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-border bg-surface-secondary">
-                  <th className="text-left text-xs font-medium text-text-secondary uppercase tracking-wider px-6 py-3">Name</th>
-                  <th className="text-left text-xs font-medium text-text-secondary uppercase tracking-wider px-6 py-3 hidden md:table-cell">Service</th>
-                  <th className="text-left text-xs font-medium text-text-secondary uppercase tracking-wider px-6 py-3 hidden lg:table-cell">Vehicle</th>
-                  <th className="text-left text-xs font-medium text-text-secondary uppercase tracking-wider px-6 py-3">Status</th>
-                  <th className="text-left text-xs font-medium text-text-secondary uppercase tracking-wider px-6 py-3 hidden md:table-cell">Score</th>
-                  <th className="text-left text-xs font-medium text-text-secondary uppercase tracking-wider px-6 py-3 hidden lg:table-cell">Intent</th>
-                  <th className="text-left text-xs font-medium text-text-secondary uppercase tracking-wider px-6 py-3 hidden sm:table-cell">Date</th>
-                  <th className="text-right text-xs font-medium text-text-secondary uppercase tracking-wider px-6 py-3">Actions</th>
+                  <th className="text-left text-xs font-semibold text-text-secondary uppercase tracking-wider px-6 py-2.5">Name</th>
+                  <th className="text-left text-xs font-semibold text-text-secondary uppercase tracking-wider px-6 py-2.5 hidden md:table-cell">Service</th>
+                  <th className="text-left text-xs font-semibold text-text-secondary uppercase tracking-wider px-6 py-2.5 hidden lg:table-cell">Vehicle</th>
+                  <th className="text-left text-xs font-semibold text-text-secondary uppercase tracking-wider px-6 py-2.5">Status</th>
+                  <th className="text-left text-xs font-semibold text-text-secondary uppercase tracking-wider px-6 py-2.5 hidden md:table-cell">Score</th>
+                  <th className="text-left text-xs font-semibold text-text-secondary uppercase tracking-wider px-6 py-2.5 hidden lg:table-cell">Intent</th>
+                  <th className="text-left text-xs font-semibold text-text-secondary uppercase tracking-wider px-6 py-2.5 hidden sm:table-cell">Date</th>
+                  <th className="text-right text-xs font-semibold text-text-secondary uppercase tracking-wider px-6 py-2.5">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
                 {filtered.map((lead) => (
                   <tr key={lead.id} className="hover:bg-surface-secondary transition-colors">
-                    <td className="px-6 py-4">
-                      <div>
-                        <p className="font-medium text-text-primary">{lead.name || '—'}</p>
-                        <p className="text-xs text-text-secondary">{lead.email || lead.phone || '—'}</p>
+                    <td className="px-6 py-3.5">
+                      <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 rounded-full bg-primary-50 flex items-center justify-center shrink-0 text-xs font-semibold text-primary-700">
+                          {getInitials(lead.name)}
+                        </div>
+                        <div className="min-w-0">
+                          <p className="font-medium text-text-primary truncate">{lead.name || '—'}</p>
+                          <p className="text-xs text-text-secondary truncate">{lead.email || lead.phone || '—'}</p>
+                        </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 hidden md:table-cell text-sm text-text-secondary">{lead.service_requested || '—'}</td>
-                    <td className="px-6 py-4 hidden lg:table-cell text-sm text-text-secondary">{lead.vehicle || '—'}</td>
-                    <td className="px-6 py-4"><StatusBadge status={lead.status as LeadStatus} /></td>
-                    <td className="px-6 py-4 hidden md:table-cell">
+                    <td className="px-6 py-3.5 hidden md:table-cell text-sm text-text-secondary">{lead.service_requested || '—'}</td>
+                    <td className="px-6 py-3.5 hidden lg:table-cell text-sm text-text-secondary">{lead.vehicle || '—'}</td>
+                    <td className="px-6 py-3.5"><StatusBadge status={lead.status as LeadStatus} /></td>
+                    <td className="px-6 py-3.5 hidden md:table-cell">
                       <div className="flex items-center gap-2">
                         <span className="text-sm text-text-secondary">{lead.lead_score ?? '—'}</span>
                         {lead.qualification && <QualificationBadge qualification={lead.qualification} />}
                       </div>
                     </td>
-                    <td className="px-6 py-4 hidden lg:table-cell text-sm text-text-secondary capitalize">{lead.intent || '—'}</td>
-                    <td className="px-6 py-4 hidden sm:table-cell text-sm text-text-secondary">
+                    <td className="px-6 py-3.5 hidden lg:table-cell text-sm text-text-secondary capitalize">{lead.intent || '—'}</td>
+                    <td className="px-6 py-3.5 hidden sm:table-cell text-sm text-text-secondary">
                       {new Date(lead.created_at).toLocaleDateString()}
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-3.5">
                       <div className="flex items-center justify-end gap-1">
                         <button
                           onClick={() => setModal({ mode: 'view', lead })}
-                          className="p-1.5 text-text-tertiary hover:text-primary-600 transition-colors"
+                          className="focus-ring p-1.5 rounded-md text-text-tertiary hover:text-primary-600 hover:bg-surface-tertiary transition-colors"
                           title="View"
+                          aria-label={`View ${lead.name || 'lead'}`}
                         >
                           <Eye className="w-4 h-4" />
                         </button>
                         <button
                           onClick={() => setModal({ mode: 'edit', lead })}
-                          className="p-1.5 text-text-tertiary hover:text-primary-600 transition-colors"
+                          className="focus-ring p-1.5 rounded-md text-text-tertiary hover:text-primary-600 hover:bg-surface-tertiary transition-colors"
                           title="Edit"
+                          aria-label={`Edit ${lead.name || 'lead'}`}
                         >
                           <Pencil className="w-4 h-4" />
                         </button>
                         <button
                           onClick={() => setDeleteConfirm(lead.id)}
-                          className="p-1.5 text-text-tertiary hover:text-red-500 transition-colors"
+                          className="focus-ring p-1.5 rounded-md text-text-tertiary hover:text-red-500 hover:bg-surface-tertiary transition-colors"
                           title="Delete"
+                          aria-label={`Delete ${lead.name || 'lead'}`}
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
@@ -405,8 +427,8 @@ function LeadsPage() {
       )}
 
       {deleteConfirm && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl shadow-2xl w-full max-w-sm p-6">
+        <div className="animate-overlay-in fixed inset-0 bg-ink-950/50 z-50 flex items-center justify-center p-4">
+          <div className="animate-panel-in bg-white rounded-xl border border-border shadow-2xl w-full max-w-sm p-6">
             <h3 className="text-lg font-semibold text-text-primary mb-2">Delete Lead?</h3>
             <p className="text-sm text-text-secondary mb-6">This action cannot be undone.</p>
             <div className="flex justify-end gap-3">

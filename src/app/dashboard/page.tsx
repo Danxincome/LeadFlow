@@ -2,9 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Users, UserPlus, TrendingUp, DollarSign, Clock, ArrowUpRight } from 'lucide-react';
+import { Users, UserPlus, TrendingUp, DollarSign, ArrowUpRight } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { StatusBadge } from '@/components/ui/status-badge';
+import { EmptyState } from '@/components/ui/empty-state';
 import { PageLoading } from '@/components/ui/loading';
 import type { Lead, LeadStatus } from '@/lib/types';
 
@@ -12,22 +13,19 @@ interface StatsCardProps {
   title: string;
   value: string | number;
   icon: React.ElementType;
-  color: string;
-  bgColor: string;
+  accentBorder: string;
+  iconColor: string;
+  primary?: boolean;
 }
 
-function StatsCard({ title, value, icon: Icon, color, bgColor }: StatsCardProps) {
+function StatsCard({ title, value, icon: Icon, accentBorder, iconColor, primary }: StatsCardProps) {
   return (
-    <div className="card p-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="text-sm font-medium text-text-secondary">{title}</p>
-          <p className="text-3xl font-bold text-text-primary mt-1">{value}</p>
-        </div>
-        <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${bgColor}`}>
-          <Icon className={`w-6 h-6 ${color}`} />
-        </div>
+    <div className={`card p-6 border-t-2 ${accentBorder}`}>
+      <div className="flex items-center gap-2">
+        <Icon className={`w-4 h-4 ${iconColor}`} />
+        <p className="text-sm font-medium text-text-secondary">{title}</p>
       </div>
+      <p className={`font-bold text-text-primary mt-2 ${primary ? 'text-4xl' : 'text-2xl'}`}>{value}</p>
     </div>
   );
 }
@@ -89,15 +87,13 @@ export default function DashboardPage() {
 
   if (!hasBusinessProfile) {
     return (
-      <div className="max-w-lg mx-auto text-center py-20">
-        <div className="w-16 h-16 rounded-2xl bg-primary-50 flex items-center justify-center mx-auto mb-4">
-          <Users className="w-8 h-8 text-primary-500" />
-        </div>
-        <h2 className="text-2xl font-bold text-text-primary mb-2">Welcome to LeadFlow AI!</h2>
-        <p className="text-text-secondary mb-6">Let&apos;s set up your business profile so the AI can start helping your customers.</p>
-        <button onClick={() => router.push('/dashboard/onboarding')} className="btn-primary">
-          Set Up Business Profile
-        </button>
+      <div className="max-w-lg mx-auto mt-8">
+        <EmptyState
+          icon={Users}
+          title="Welcome to LeadFlow AI!"
+          description="Let's set up your business profile so the AI can start helping your customers."
+          action={{ label: 'Set Up Business Profile', onClick: () => router.push('/dashboard/onboarding') }}
+        />
       </div>
     );
   }
@@ -124,10 +120,10 @@ export default function DashboardPage() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <StatsCard title="Total Leads" value={totalLeads} icon={Users} color="text-primary-600" bgColor="bg-primary-50" />
-        <StatsCard title="New Leads" value={newLeads} icon={UserPlus} color="text-blue-600" bgColor="bg-blue-50" />
-        <StatsCard title="Conversion Rate" value={`${conversionRate}%`} icon={TrendingUp} color="text-green-600" bgColor="bg-green-50" />
-        <StatsCard title="Booked" value={bookedLeads} icon={DollarSign} color="text-violet-600" bgColor="bg-violet-50" />
+        <StatsCard title="Total Leads" value={totalLeads} icon={Users} accentBorder="border-primary-600" iconColor="text-primary-600" primary />
+        <StatsCard title="New Leads" value={newLeads} icon={UserPlus} accentBorder="border-status-new" iconColor="text-status-new" />
+        <StatsCard title="Conversion Rate" value={`${conversionRate}%`} icon={TrendingUp} accentBorder="border-accent-500" iconColor="text-accent-500" />
+        <StatsCard title="Booked" value={bookedLeads} icon={DollarSign} accentBorder="border-status-booked" iconColor="text-status-booked" />
       </div>
 
       <div className="grid lg:grid-cols-3 gap-6">
@@ -151,7 +147,8 @@ export default function DashboardPage() {
                     <StatusBadge status={lead.status as LeadStatus} />
                     <button
                       onClick={() => router.push(`/dashboard/leads?id=${lead.id}`)}
-                      className="p-1.5 text-text-tertiary hover:text-primary-600 transition-colors"
+                      aria-label={`View ${lead.name || 'lead'}`}
+                      className="focus-ring rounded-md p-1.5 text-text-tertiary hover:text-primary-600 transition-colors"
                     >
                       <ArrowUpRight className="w-4 h-4" />
                     </button>

@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Zap, ArrowLeft } from 'lucide-react';
+import { Zap, ArrowLeft, MessageCircle, Hash, RotateCcw } from 'lucide-react';
 import { ChatWidget } from '@/components/chat/chat-widget';
 import { SiteFooter } from '@/components/layout/site-footer';
 
@@ -30,26 +30,35 @@ export default function ChatDemoPage() {
 
       <div className="max-w-4xl mx-auto px-4 py-12">
         <div className="text-center mb-10">
-          <h1 className="text-3xl font-bold text-text-primary mb-3">Chat Widget Demo</h1>
+          <div className="w-14 h-14 rounded-2xl bg-primary-50 flex items-center justify-center mx-auto mb-4">
+            <MessageCircle className="w-7 h-7 text-primary-600" />
+          </div>
+          <p className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-primary-600 bg-primary-50 rounded-full px-3 py-1 mb-4">
+            Live Demo
+          </p>
+          <h1 className="text-3xl font-bold text-text-primary mb-3">Try the AI Receptionist</h1>
           <p className="text-text-secondary max-w-xl mx-auto">
-            Test the AI receptionist chat widget. Enter your business ID to connect it to your business profile.
+            See exactly what your customers experience. Connect a business profile below to start a live conversation with your AI receptionist.
           </p>
         </div>
 
         {!started ? (
-          <div className="card p-8 max-w-md mx-auto">
+          <div className="card p-8 max-w-md mx-auto shadow-md">
             <h2 className="text-lg font-semibold text-text-primary mb-4">Connect to Your Business</h2>
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-text-primary mb-1.5">
                   Business ID
                 </label>
-                <input
-                  className="input-field"
-                  value={businessId}
-                  onChange={(e) => setBusinessId(e.target.value)}
-                  placeholder="Paste your business ID here"
-                />
+                <div className="relative">
+                  <Hash className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-tertiary" />
+                  <input
+                    className="input-field pl-9"
+                    value={businessId}
+                    onChange={(e) => setBusinessId(e.target.value)}
+                    placeholder="Paste your business ID here"
+                  />
+                </div>
                 <p className="text-xs text-text-tertiary mt-1.5">
                   Find your business ID in the dashboard URL or database.
                 </p>
@@ -64,17 +73,26 @@ export default function ChatDemoPage() {
             </div>
           </div>
         ) : (
-          <div className="max-w-md mx-auto">
-            <ChatWidget
-              businessId={businessId}
-              greeting="Hi there! Welcome. How can I help you today?"
-              inline
-            />
+          <div className="max-w-[380px] mx-auto">
+            <div className="rounded-[2.5rem] bg-ink-900 p-3 shadow-2xl">
+              <div className="relative rounded-[2rem] overflow-hidden bg-white">
+                <div className="absolute top-0 inset-x-0 flex justify-center pt-2.5 z-10 pointer-events-none">
+                  <div className="w-20 h-5 rounded-full bg-ink-900" />
+                </div>
+                <div className="pt-6">
+                  <ChatWidget
+                    businessId={businessId}
+                    greeting="Hi there! Welcome. How can I help you today?"
+                    inline
+                  />
+                </div>
+              </div>
+            </div>
             <button
               onClick={() => { setStarted(false); setBusinessId(''); }}
-              className="btn-secondary w-full mt-4"
+              className="btn-secondary w-full mt-4 flex items-center justify-center gap-2"
             >
-              Reset Demo
+              <RotateCcw className="w-4 h-4" /> Reset Demo
             </button>
           </div>
         )}

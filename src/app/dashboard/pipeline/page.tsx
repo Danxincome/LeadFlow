@@ -1,25 +1,73 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { Kanban, User } from 'lucide-react';
+import { Kanban, User, MoreHorizontal } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { EmptyState } from '@/components/ui/empty-state';
 import { PageLoading } from '@/components/ui/loading';
 import type { Lead, LeadStatus } from '@/lib/types';
 
 const columns: { status: LeadStatus; label: string; color: string; bgColor: string }[] = [
-  { status: 'new', label: 'New', color: 'bg-blue-500', bgColor: 'bg-blue-50' },
-  { status: 'contacted', label: 'Contacted', color: 'bg-amber-500', bgColor: 'bg-amber-50' },
-  { status: 'qualified', label: 'Qualified', color: 'bg-violet-500', bgColor: 'bg-violet-50' },
-  { status: 'booked', label: 'Booked', color: 'bg-green-500', bgColor: 'bg-green-50' },
-  { status: 'lost', label: 'Lost', color: 'bg-red-500', bgColor: 'bg-red-50' },
+  { status: 'new', label: 'New', color: 'bg-status-new', bgColor: 'bg-status-new/8' },
+  { status: 'contacted', label: 'Contacted', color: 'bg-status-contacted', bgColor: 'bg-status-contacted/8' },
+  { status: 'qualified', label: 'Qualified', color: 'bg-status-qualified', bgColor: 'bg-status-qualified/8' },
+  { status: 'booked', label: 'Booked', color: 'bg-status-booked', bgColor: 'bg-status-booked/8' },
+  { status: 'lost', label: 'Lost', color: 'bg-status-lost', bgColor: 'bg-status-lost/8' },
 ];
+
+function MoveMenu({ current, onMove }: { current: LeadStatus; onMove: (status: LeadStatus) => void }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  return (
+    <div ref={ref} className="relative" onClick={(e) => e.stopPropagation()}>
+      <button
+        onClick={() => setOpen((o) => !o)}
+        aria-haspopup="true"
+        aria-expanded={open}
+        aria-label="Move to status"
+        className="focus-ring flex items-center justify-center w-8 h-8 rounded-md text-text-tertiary hover:text-text-primary hover:bg-surface-tertiary transition-colors"
+      >
+        <MoreHorizontal className="w-4 h-4" />
+      </button>
+      {open && (
+        <div className="animate-dropdown-in absolute right-0 z-10 mt-1 w-40 rounded-lg border border-border bg-white shadow-lg overflow-hidden">
+          <p className="px-3 py-2 text-xs font-semibold uppercase tracking-wide text-text-tertiary border-b border-border-light">
+            Move to
+          </p>
+          {columns
+            .filter((c) => c.status !== current)
+            .map((c) => (
+              <button
+                key={c.status}
+                onClick={() => {
+                  onMove(c.status);
+                  setOpen(false);
+                }}
+                className="flex items-center gap-2 w-full px-3 py-2 text-sm text-text-secondary hover:bg-surface-tertiary hover:text-text-primary transition-colors text-left"
+              >
+                <span className={`w-2 h-2 rounded-full ${c.color}`} />
+                {c.label}
+              </button>
+            ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function PipelinePage() {
   const [leads, setLeads] = useState<Lead[]>([]);
   const [loading, setLoading] = useState(true);
-  const [businessId, setBusinessId] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -38,8 +86,6 @@ export default function PipelinePage() {
         router.push('/dashboard/onboarding');
         return;
       }
-
-      setBusinessId(business.id);
 
       const { data } = await supabase
         .from('leads')
@@ -103,36 +149,23 @@ export default function PipelinePage() {
                 {columnLeads.map((lead) => (
                   <div
                     key={lead.id}
-                    className="bg-white rounded-lg p-3 shadow-sm border border-border hover:shadow-md transition-shadow cursor-pointer"
+                    className="bg-white rounded-xl p-3.5 shadow-sm border border-border hover:shadow-md hover:border-primary-200 transition-all cursor-pointer"
                     onClick={() => router.push(`/dashboard/leads?id=${lead.id}`)}
                   >
-                    <div className="flex items-start gap-2 mb-2">
+                    <div className="flex items-start gap-2.5 mb-2.5">
                       <div className="w-7 h-7 rounded-full bg-surface-tertiary flex items-center justify-center shrink-0">
                         <User className="w-3.5 h-3.5 text-text-tertiary" />
                       </div>
-                      <div className="min-w-0">
+                      <div className="min-w-0 flex-1">
                         <p className="text-sm font-medium text-text-primary truncate">{lead.name || 'Unknown'}</p>
                         <p className="text-xs text-text-secondary truncate">{lead.service_requested || 'No service'}</p>
                       </div>
                     </div>
                     {lead.vehicle && (
-                      <p className="text-xs text-text-tertiary truncate mb-2">{lead.vehicle}</p>
+                      <p className="text-xs text-text-tertiary truncate mb-2.5">{lead.vehicle}</p>
                     )}
-                    <div className="flex gap-1 flex-wrap">
-                      {columns
-                        .filter((c) => c.status !== col.status)
-                        .map((c) => (
-                          <button
-                            key={c.status}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              moveToStatus(lead.id, c.status);
-                            }}
-                            className="text-[10px] font-medium text-text-tertiary hover:text-text-primary bg-surface-secondary hover:bg-surface-tertiary px-1.5 py-0.5 rounded transition-colors"
-                          >
-                            {c.label}
-                          </button>
-                        ))}
+                    <div className="flex items-center justify-end pt-2 border-t border-border-light">
+                      <MoveMenu current={lead.status} onMove={(status) => moveToStatus(lead.id, status)} />
                     </div>
                   </div>
                 ))}
