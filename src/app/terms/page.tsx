@@ -164,7 +164,7 @@ export default function TermsOfServicePage() {
 
         <Section title="12. Governing Law">
           <p>
-            These Terms will be governed by the laws of [GOVERNING LAW JURISDICTION], without regard to its conflict-of-laws
+            These Terms will be governed by the laws of California, without regard to its conflict-of-laws
             principles, except where applicable law requires otherwise.
           </p>
         </Section>
