@@ -232,7 +232,7 @@ export default function PrivacyPolicyPage() {
           </p>
           <p>
             To make a privacy request — whether you are a Business Customer or an End Customer who chatted with a business using
-            LeadFlow — please contact us at <span className="font-medium text-text-primary">[PRIVACY EMAIL]</span>. We may need to
+            LeadFlow — please contact us at <span className="font-medium text-text-primary">d95555194@gmail.com</span>. We may need to
             verify your identity, and to route certain requests to the relevant Business Customer, before completing a request.
           </p>
         </Section>
@@ -288,7 +288,7 @@ export default function PrivacyPolicyPage() {
             <li>Not be discriminated against for exercising any of these rights.</li>
           </ul>
           <p>
-            To exercise these rights, contact us at <span className="font-medium text-text-primary">[PRIVACY EMAIL]</span>. You may
+            To exercise these rights, contact us at <span className="font-medium text-text-primary">d95555194@gmail.com</span>. You may
             also designate an authorized agent to make a request on your behalf, subject to our ability to verify that
             authorization. We will not discriminate against you for exercising your privacy rights.
           </p>
@@ -298,7 +298,7 @@ export default function PrivacyPolicyPage() {
           <p>
             LeadFlow is intended for use by businesses and their adult customers. It is not directed to children, and we do not
             knowingly collect personal information from children through the chatbot. If you believe a child has provided personal
-            information to LeadFlow, please contact us at <span className="font-medium text-text-primary">[PRIVACY EMAIL]</span> so
+            information to LeadFlow, please contact us at <span className="font-medium text-text-primary">d95555194@gmail.com</span> so
             we can address it.
           </p>
         </Section>
@@ -322,9 +322,9 @@ export default function PrivacyPolicyPage() {
 
         <Section title="14. Contact Us">
           <p>
-            LeadFlow AI is operated by <span className="font-medium text-text-primary">[LEGAL BUSINESS NAME]</span>. If you have
+            This Service is operated by <span className="font-medium text-text-primary">LeadFlow AI</span>. If you have
             questions about this Privacy Policy or wish to exercise a privacy right described above, please contact us at{' '}
-            <span className="font-medium text-text-primary">[PRIVACY EMAIL]</span>.
+            <span className="font-medium text-text-primary">d95555194@gmail.com</span>.
           </p>
         </Section>
       </div>

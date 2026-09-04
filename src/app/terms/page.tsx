@@ -171,9 +171,9 @@ export default function TermsOfServicePage() {
 
         <Section title="13. Contact Us">
           <p>
-            LeadFlow AI is operated by <span className="font-medium text-text-primary">[LEGAL BUSINESS NAME]</span>. If you have
+            This Service is operated by <span className="font-medium text-text-primary">LeadFlow AI</span>. If you have
             questions about these Terms, please contact us at{' '}
-            <span className="font-medium text-text-primary">[SUPPORT EMAIL]</span>. For privacy-related requests, see our{' '}
+            <span className="font-medium text-text-primary">d95555194@gmail.com</span>. For privacy-related requests, see our{' '}
             <Link href="/privacy" className="text-primary-600 hover:text-primary-700 font-medium transition-colors">
               Privacy Policy
             </Link>
