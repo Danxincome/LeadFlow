@@ -279,6 +279,10 @@
 
       var content = error && error.message === 'Business not found'
         ? 'This chat isn’t set up correctly yet. Please contact the business directly.'
+        : error && error.message === 'Subscription inactive'
+        ? 'This chat isn’t available right now. Please contact the business directly.'
+        : error && error.message === 'Usage limit reached'
+        ? 'This chat has reached its monthly limit. Please contact the business directly.'
         : 'I’m having trouble connecting right now. Please try again in a moment.';
 
       addMessage('assistant', content);

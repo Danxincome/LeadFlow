@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/admin';
+import { getBillingPeriodStart, hasActiveAccess } from '@/lib/subscription';
+import { getConversationLimit, getPlanByPriceId } from '@/lib/stripe/plans';
 
 const supabase = createAdminClient();
 
@@ -262,6 +264,20 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Business not found' }, { status: 404 });
     }
 
+    const { data: subscription, error: subscriptionError } = await supabase
+      .from('subscriptions')
+      .select('status, stripe_price_id, current_period_end')
+      .eq('business_id', businessId)
+      .maybeSingle();
+
+    if (subscriptionError) {
+      console.error('Failed to load subscription status:', subscriptionError);
+    }
+
+    if (!hasActiveAccess(subscription?.status)) {
+      return NextResponse.json({ error: 'Subscription inactive' }, { status: 402 });
+    }
+
     const { data: aiSettings, error: aiSettingsError } = await supabase
       .from('ai_settings')
       .select('*')
@@ -275,6 +291,23 @@ export async function POST(request: NextRequest) {
     let convId = conversationId;
 
     if (!convId) {
+      const limit = getConversationLimit(getPlanByPriceId(subscription?.stripe_price_id));
+
+      if (limit !== null) {
+        const periodStart = getBillingPeriodStart(subscription?.current_period_end ?? null);
+        const { count, error: usageError } = await supabase
+          .from('conversations')
+          .select('id', { count: 'exact', head: true })
+          .eq('business_id', businessId)
+          .gte('started_at', periodStart.toISOString());
+
+        if (usageError) {
+          console.error('Failed to check conversation usage:', usageError);
+        } else if ((count ?? 0) >= limit) {
+          return NextResponse.json({ error: 'Usage limit reached' }, { status: 402 });
+        }
+      }
+
       const { data: conv, error: convError } = await supabase
         .from('conversations')
         .insert({ business_id: businessId })

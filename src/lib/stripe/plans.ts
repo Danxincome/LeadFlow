@@ -18,6 +18,8 @@ export interface PlanConfig {
   description: string;
   features: string[];
   priceEnvVar: string;
+  /** Max AI conversations (new `conversations` rows) per billing period, or null for unlimited. */
+  conversationLimit: number | null;
 }
 
 export const PLANS: PlanConfig[] = [
@@ -29,6 +31,7 @@ export const PLANS: PlanConfig[] = [
     description: 'Perfect for getting started with AI-powered lead capture.',
     features: ['100 AI conversations/month', 'Unlimited leads', 'Chat widget', 'Email notifications', 'Basic dashboard'],
     priceEnvVar: 'STRIPE_PRICE_STARTER',
+    conversationLimit: 100,
   },
   {
     id: 'professional',
@@ -46,6 +49,7 @@ export const PLANS: PlanConfig[] = [
       'Priority support',
     ],
     priceEnvVar: 'STRIPE_PRICE_PROFESSIONAL',
+    conversationLimit: null,
   },
   {
     id: 'enterprise',
@@ -62,6 +66,7 @@ export const PLANS: PlanConfig[] = [
       'White-label widget',
     ],
     priceEnvVar: 'STRIPE_PRICE_ENTERPRISE',
+    conversationLimit: null,
   },
 ];
 
@@ -73,4 +78,20 @@ export function getPlan(id: string | undefined | null): PlanConfig | undefined {
 export function getPriceId(plan: PlanConfig): string | undefined {
   const value = process.env[plan.priceEnvVar];
   return value && !value.startsWith('your-') ? value : undefined;
+}
+
+/** Resolves a `stripe_price_id` (as stored on a `subscriptions` row) back to its plan. */
+export function getPlanByPriceId(priceId: string | null | undefined): PlanConfig | undefined {
+  if (!priceId) return undefined;
+  return PLANS.find((plan) => getPriceId(plan) === priceId);
+}
+
+/**
+ * Conversation limit for a plan. An unresolved plan (e.g. a `stripe_price_id`
+ * that doesn't match any configured plan — stale env var, manually-created
+ * Stripe price, un-synced webhook) fails closed to the Starter limit rather
+ * than granting unlimited usage.
+ */
+export function getConversationLimit(plan: PlanConfig | undefined): number | null {
+  return plan ? plan.conversationLimit : PLANS.find((p) => p.id === 'starter')!.conversationLimit;
 }

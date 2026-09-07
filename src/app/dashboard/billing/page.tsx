@@ -1,14 +1,26 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { CreditCard, Check, ExternalLink, AlertCircle } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { PageLoading, Spinner } from '@/components/ui/loading';
 import { EmptyState } from '@/components/ui/empty-state';
 import { PLANS, type PlanId } from '@/lib/stripe/plans';
+import { hasActiveAccess } from '@/lib/subscription';
 import type { Subscription } from '@/lib/types';
 
 export default function BillingPage() {
+  return (
+    <Suspense fallback={<PageLoading />}>
+      <BillingPageContent />
+    </Suspense>
+  );
+}
+
+function BillingPageContent() {
+  const searchParams = useSearchParams();
+  const subscriptionRequired = searchParams.get('required') === '1';
   const [loading, setLoading] = useState(true);
   const [businessId, setBusinessId] = useState<string | null>(null);
   const [subscription, setSubscription] = useState<Subscription | null>(null);
@@ -112,7 +124,7 @@ export default function BillingPage() {
   }
 
   const currentPlan = currentPlanId ? PLANS.find((p) => p.id === currentPlanId) : undefined;
-  const hasActiveSubscription = subscription && ['active', 'trialing', 'past_due'].includes(subscription.status);
+  const hasActiveSubscription = hasActiveAccess(subscription?.status);
 
   return (
     <div className="max-w-4xl mx-auto">
@@ -125,6 +137,13 @@ export default function BillingPage() {
         <div className="card p-4 mb-6 bg-red-50 border-red-100 flex items-start gap-2.5">
           <AlertCircle className="w-4 h-4 text-red-600 mt-0.5 shrink-0" />
           <p className="text-sm text-red-700">{error}</p>
+        </div>
+      )}
+
+      {!error && subscriptionRequired && !hasActiveSubscription && (
+        <div className="card p-4 mb-6 bg-amber-50 border-amber-100 flex items-start gap-2.5">
+          <AlertCircle className="w-4 h-4 text-amber-600 mt-0.5 shrink-0" />
+          <p className="text-sm text-amber-800">Choose a plan to unlock your dashboard and chat widget.</p>
         </div>
       )}
 

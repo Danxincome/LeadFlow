@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-import { PLANS, getPriceId } from '@/lib/stripe/plans';
+import { getPlanByPriceId } from '@/lib/stripe/plans';
 
 /**
  * Returns the caller's subscription row plus which configured plan (if any)
@@ -31,9 +31,7 @@ export async function GET() {
     .eq('business_id', business.id)
     .maybeSingle();
 
-  const planId = subscription?.stripe_price_id
-    ? PLANS.find((plan) => getPriceId(plan) === subscription.stripe_price_id)?.id ?? null
-    : null;
+  const planId = getPlanByPriceId(subscription?.stripe_price_id)?.id ?? null;
 
   return NextResponse.json({ subscription: subscription ?? null, planId });
 }

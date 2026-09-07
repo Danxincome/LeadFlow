@@ -75,6 +75,10 @@ export function ChatWidget({ businessId, greeting, inline = false }: ChatWidgetP
         const content =
           data.error === 'Business not found'
             ? "This chat isn't set up correctly yet. Please contact the business directly."
+            : data.error === 'Subscription inactive'
+            ? "This chat isn't available right now. Please contact the business directly."
+            : data.error === 'Usage limit reached'
+            ? "This chat has reached its monthly limit. Please contact the business directly."
             : "I'm sorry, I couldn't process that. Please try again.";
         setMessages((prev) => [...prev, { id: (Date.now() + 1).toString(), role: 'assistant', content }]);
         return;

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { hasActiveAccess } from '@/lib/subscription';
 
 export async function GET() {
   const supabase = await createClient();
@@ -17,6 +18,16 @@ export async function GET() {
 
   if (!business) {
     return NextResponse.json({ error: 'No business found' }, { status: 404 });
+  }
+
+  const { data: subscription } = await supabase
+    .from('subscriptions')
+    .select('status')
+    .eq('business_id', business.id)
+    .maybeSingle();
+
+  if (!hasActiveAccess(subscription?.status)) {
+    return NextResponse.json({ error: 'Subscription inactive' }, { status: 402 });
   }
 
   const { data: leads } = await supabase
@@ -44,6 +55,16 @@ export async function POST(request: NextRequest) {
 
   if (!business) {
     return NextResponse.json({ error: 'No business found' }, { status: 404 });
+  }
+
+  const { data: subscription } = await supabase
+    .from('subscriptions')
+    .select('status')
+    .eq('business_id', business.id)
+    .maybeSingle();
+
+  if (!hasActiveAccess(subscription?.status)) {
+    return NextResponse.json({ error: 'Subscription inactive' }, { status: 402 });
   }
 
   const body = await request.json();
